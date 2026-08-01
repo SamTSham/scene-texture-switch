@@ -2,6 +2,7 @@ require 'json'
 require File.join(__dir__, 'texture_library_status')
 require File.join(__dir__, 'scene_snapshot')
 require File.join(__dir__, 'overview_pages_observer')
+require File.join(__dir__, 'scene_assignment')
 
 module SceneTextureSwitcher
   module Core
@@ -60,6 +61,9 @@ module SceneTextureSwitcher
       @overview_dialog.add_action_callback('requestSnapshot') do |_action_context|
         refresh_overview(@overview_dialog)
       end
+      @overview_dialog.add_action_callback('setCue') do |_action_context, scene_key, cue|
+        assign_overview_cue(scene_key, cue)
+      end
       @overview_dialog.set_on_closed do
         detach_overview_pages_observer
         @overview_dialog = nil
@@ -78,6 +82,17 @@ module SceneTextureSwitcher
       dialog.execute_script("SceneTextureOverview.render(#{JSON.generate(snapshot)})")
     rescue StandardError => error
       puts "[SceneTextureSwitcher] Overview refresh failed: #{error.class}: #{error.message}"
+    end
+
+    def assign_overview_cue(scene_key, cue)
+      result = SceneAssignment.assign(Sketchup.active_model, scene_key, cue)
+      unless result[:success]
+        UI.messagebox("Texture assignment was not saved.\n\n#{result[:error]}")
+        return
+      end
+
+      apply_all_textures(result[:cue]) if result[:current]
+      refresh_overview(@overview_dialog)
     end
 
     def schedule_refresh

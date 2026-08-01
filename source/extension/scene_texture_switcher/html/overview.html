@@ -161,9 +161,13 @@
       border-radius: 5px;
       padding: 3px 6px;
       background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
       text-align: center;
       font-variant-numeric: tabular-nums;
     }
+
+    .cue:hover, .cue:focus { border-color: var(--current); }
 
     .count {
       color: var(--muted);
@@ -184,7 +188,7 @@
       font-size: 11px;
     }
 
-    .read-only {
+    .development {
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 1px 6px;
@@ -192,6 +196,74 @@
       letter-spacing: .02em;
       text-transform: uppercase;
     }
+
+    .picker-backdrop {
+      position: fixed;
+      z-index: 20;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, .24);
+    }
+
+    .picker-backdrop[hidden] { display: none; }
+
+    .picker {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      width: min(310px, 100%);
+      max-height: min(390px, calc(100vh - 36px));
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, .28);
+    }
+
+    .picker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .picker-title {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 13px;
+      font-weight: 650;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .picker-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      overflow: auto;
+      padding: 9px;
+    }
+
+    .picker-option {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      gap: 5px;
+      align-items: center;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .picker-option:hover, .picker-option:focus { border-color: var(--current); }
+    .picker-option.active {
+      border-color: var(--current);
+      box-shadow: inset 0 0 0 1px var(--current);
+    }
+
+    .picker-option .dot { width: 8px; height: 8px; }
   </style>
 </head>
 <body>
@@ -204,8 +276,17 @@
     <main class="rows" id="rows"></main>
     <footer>
       <span id="summary">Reading scenes…</span>
-      <span class="read-only">Preview</span>
+      <span class="development">Development</span>
     </footer>
+  </div>
+  <div class="picker-backdrop" id="pickerBackdrop" hidden>
+    <section class="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+      <div class="picker-header">
+        <span class="picker-title" id="pickerTitle">Assign texture</span>
+        <button type="button" id="pickerClose" aria-label="Close texture picker">&#x2715;</button>
+      </div>
+      <div class="picker-grid" id="pickerGrid"></div>
+    </section>
   </div>
 
   <script>
@@ -213,7 +294,12 @@
       const rowsElement = document.getElementById('rows');
       const libraryElement = document.getElementById('library');
       const summaryElement = document.getElementById('summary');
+      const pickerBackdrop = document.getElementById('pickerBackdrop');
+      const pickerGrid = document.getElementById('pickerGrid');
+      const pickerTitle = document.getElementById('pickerTitle');
       let selectedKey = null;
+      let currentData = null;
+      let pickerScene = null;
 
       const labels = {
         ready: 'ready',
@@ -243,6 +329,7 @@
       }
 
       function render(data) {
+        currentData = data;
         libraryElement.textContent = libraryText(data.library);
         rowsElement.innerHTML = '';
 
@@ -260,11 +347,15 @@
                 <span class="scene-name">${escapeText(scene.scene_name)}</span>
                 <span class="scene-detail">${escapeText(detailFor(scene))}</span>
               </span>
-              <span class="cue">${escapeText(scene.texture_index)}</span>
+              <button type="button" class="cue" aria-label="Assign texture for ${escapeText(scene.scene_name)}">${escapeText(scene.texture_index)}</button>
               <span class="count">${scene.present_count}/${scene.required_count}</span>`;
             row.addEventListener('click', () => {
               selectedKey = scene.scene_key;
               rowsElement.querySelectorAll('.row').forEach((item) => item.classList.toggle('selected', item === row));
+            });
+            row.querySelector('.cue').addEventListener('click', (event) => {
+              event.stopPropagation();
+              openPicker(scene);
             });
             rowsElement.appendChild(row);
           });
@@ -274,6 +365,36 @@
         summaryElement.textContent = attention === 0
           ? `${data.summary.scene_count} scenes ready`
           : `${attention} ${attention === 1 ? 'scene needs' : 'scenes need'} attention`;
+      }
+
+      function openPicker(scene) {
+        pickerScene = scene;
+        pickerTitle.textContent = `Texture for ${scene.scene_name}`;
+        pickerGrid.innerHTML = '';
+        currentData.texture_states.forEach((state) => {
+          const option = document.createElement('button');
+          option.type = 'button';
+          option.className = `picker-option${state.texture_index === scene.texture_index ? ' active' : ''}`;
+          option.title = `${state.texture_index} — ${labels[state.status] || state.status} (${state.present_count}/${state.required_count})`;
+          option.innerHTML = `<span class="dot ${escapeText(state.status)}"></span><span>${escapeText(state.texture_index)}</span>`;
+          option.addEventListener('click', () => assignTexture(state.texture_index));
+          pickerGrid.appendChild(option);
+        });
+        pickerBackdrop.hidden = false;
+        const active = pickerGrid.querySelector('.active');
+        if (active) active.scrollIntoView({ block: 'center' });
+      }
+
+      function closePicker() {
+        pickerBackdrop.hidden = true;
+        pickerScene = null;
+      }
+
+      function assignTexture(cue) {
+        if (!pickerScene || !window.sketchup) return;
+        const sceneKey = pickerScene.scene_key;
+        closePicker();
+        window.sketchup.setCue(sceneKey, cue);
       }
 
       function previewData() {
@@ -304,6 +425,15 @@
         return {
           library: { status: 'found', name: 'Textures — Preview Project', candidates: [] },
           scenes,
+          texture_states: Array.from({ length: 99 }, (_, index) => {
+            const status = states[index % states.length];
+            return {
+              texture_index: String(index + 1).padStart(2, '0'),
+              status,
+              present_count: status === 'ready' ? 3 : status === 'missing' ? 0 : 2,
+              required_count: 3
+            };
+          }),
           summary: {
             scene_count: scenes.length,
             ready: counts('ready'),
@@ -316,6 +446,13 @@
       }
 
       window.SceneTextureOverview = { render };
+      document.getElementById('pickerClose').addEventListener('click', closePicker);
+      pickerBackdrop.addEventListener('click', (event) => {
+        if (event.target === pickerBackdrop) closePicker();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closePicker();
+      });
       document.getElementById('refresh').addEventListener('click', () => {
         if (window.sketchup) window.sketchup.requestSnapshot();
       });

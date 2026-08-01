@@ -33,11 +33,12 @@ module SceneTextureSwitcher
       end
 
       {
-        mode: 'read_only',
+        mode: 'editor',
         model_name: model_name(model),
         saved: saved_model?(model),
         library: serialize_discovery(discovery),
         scenes: rows,
+        texture_states: texture_states(root, discovery),
         summary: summarize(rows)
       }
     end
@@ -99,6 +100,19 @@ module SceneTextureSwitcher
         conflict: counts[:conflict],
         attention: counts[:incomplete] + counts[:missing] + counts[:conflict]
       }
+    end
+
+    def texture_states(root, discovery)
+      (1..99).map do |number|
+        cue = format('%02d', number)
+        readiness = root ? TextureLibraryStatus.legacy_state(root, cue) : unavailable_state(cue, discovery)
+        {
+          texture_index: cue,
+          status: readiness[:status].to_s,
+          present_count: readiness[:present_count],
+          required_count: readiness[:required_count]
+        }
+      end
     end
   end
 end

@@ -69,3 +69,21 @@ the palette but not while it remained open. `dev.3` attaches SketchUp's
 removals schedule one short delayed refresh so clustered notifications do not
 cause repeated redraws. Closing the palette detaches the observer. This observer
 updates interface data only; it does not participate in texture switching.
+
+### dev.4 combined assignment palette
+
+The verified overview now becomes a development editor:
+
+- clicking a row's texture number opens an internal scrollable 01–99 picker;
+- picker entries carry the same ready, incomplete, missing, and conflict marks;
+- selecting a number writes the established `texture_index` attribute to that
+  scene without activating it;
+- the write is one SketchUp undo operation;
+- editing the current scene also calls the production switcher's proven texture
+  application method;
+- editing any other scene prepares its assignment without moving the camera;
+- the palette refreshes immediately after assignment.
+
+The picker replaces the unwieldy native 99-item dropdown. This development
+companion now writes scene assignments, but it still never creates, replaces,
+moves, or deletes texture image files.

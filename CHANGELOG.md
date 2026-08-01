@@ -25,3 +25,6 @@
   context in place of the dialog reference.
 - Added palette-lifetime scene observation and debounced live refresh for scene
   renames, additions, and removals in `dev.3`.
+- Combined overview and assignment in `dev.4` with an internal scrollable cue
+  picker, off-scene editing, undoable writes, and immediate application only for
+  the current scene.

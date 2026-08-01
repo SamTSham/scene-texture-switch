@@ -4,6 +4,7 @@ require 'json'
 require File.join(__dir__, 'texture_library_status')
 require File.join(__dir__, 'scene_snapshot')
 require File.join(__dir__, 'overview_pages_observer')
+require File.join(__dir__, 'scene_assignment')
 
 module SceneTextureSwitcher
   # Standalone read-only test companion. It does not start a timer, apply a
@@ -19,7 +20,7 @@ module SceneTextureSwitcher
       end
 
       @dialog = UI::HtmlDialog.new({
-        :dialog_title => 'Scene Texture Overview — Preview',
+        :dialog_title => 'Scene Texture Overview — Development',
         :preferences_key => 'SceneTextureOverviewPreview',
         :scrollable => false,
         :resizable => true,
@@ -32,6 +33,9 @@ module SceneTextureSwitcher
       @dialog.set_file(File.join(__dir__, 'html', 'overview.html'))
       @dialog.add_action_callback('requestSnapshot') do |_action_context|
         refresh(@dialog)
+      end
+      @dialog.add_action_callback('setCue') do |_action_context, scene_key, cue|
+        assign_cue(scene_key, cue)
       end
       @dialog.set_on_closed do
         detach_pages_observer
@@ -51,6 +55,25 @@ module SceneTextureSwitcher
       dialog.execute_script("SceneTextureOverview.render(#{JSON.generate(snapshot)})")
     rescue StandardError => error
       puts "[SceneTextureOverviewPreview] Refresh failed: #{error.class}: #{error.message}"
+    end
+
+    def assign_cue(scene_key, cue)
+      result = SceneAssignment.assign(Sketchup.active_model, scene_key, cue)
+      unless result[:success]
+        UI.messagebox("Texture assignment was not saved.\n\n#{result[:error]}")
+        return
+      end
+
+      apply_current_texture(result[:cue]) if result[:current]
+      refresh(@dialog)
+    end
+
+    def apply_current_texture(cue)
+      if defined?(SceneTextureSwitcher::Core) && SceneTextureSwitcher::Core.respond_to?(:apply_all_textures)
+        SceneTextureSwitcher::Core.apply_all_textures(cue)
+      else
+        puts '[SceneTextureOverview] Assignment saved; production switcher is unavailable for immediate application.'
+      end
     end
 
     def schedule_refresh
@@ -83,7 +106,7 @@ module SceneTextureSwitcher
   end
 
   unless file_loaded?(__FILE__)
-    UI.menu('Extensions').add_item('Scene Texture Overview — Preview') {
+    UI.menu('Extensions').add_item('Scene Texture Overview — Development') {
       OverviewPreview.activate
     }
     file_loaded(__FILE__)
