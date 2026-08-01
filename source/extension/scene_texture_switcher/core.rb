@@ -56,8 +56,8 @@ module SceneTextureSwitcher
         :style => UI::HtmlDialog::STYLE_DIALOG
       })
       @overview_dialog.set_file(File.join(__dir__, 'html', 'overview.html'))
-      @overview_dialog.add_action_callback('requestSnapshot') do |dialog, _payload|
-        refresh_overview(dialog)
+      @overview_dialog.add_action_callback('requestSnapshot') do |_action_context|
+        refresh_overview(@overview_dialog)
       end
       @overview_dialog.set_on_closed { @overview_dialog = nil }
       @overview_dialog.show

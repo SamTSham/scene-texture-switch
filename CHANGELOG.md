@@ -21,3 +21,5 @@
 - Added the isolated read-only scene overview companion, stable page snapshot,
   compatible library discovery, corrected readiness checks, and exact rendered
   interface preview for `1.1.0-dev.1`.
+- Repaired the live HtmlDialog snapshot callback after `dev.1` passed its action
+  context in place of the dialog reference.

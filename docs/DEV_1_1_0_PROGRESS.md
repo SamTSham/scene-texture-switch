@@ -52,3 +52,11 @@ Completed:
 The companion package is deliberately separate from the production extension.
 It can be installed alongside the working switcher for interface testing, then
 removed without replacing production files.
+
+### dev.2 callback repair
+
+The first live SketchUp test loaded the palette but remained at “Reading…”. The
+HTML callback context had incorrectly been passed to the refresh method as if it
+were the HtmlDialog itself. `dev.2` retains the actual dialog reference and uses
+the callback context only as the event notification. A source-level regression
+check covers both the standalone preview and future integrated code.
