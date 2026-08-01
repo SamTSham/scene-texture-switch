@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0-rc.5
+
+- Changed the macOS menu label to `Settings + Quick Guide…` because SketchUp
+  consumes ampersands as menu formatting characters.
+
 ## 1.2.0-rc.4
 
 - Changed scene detection to SketchUp's native frame-change notification so

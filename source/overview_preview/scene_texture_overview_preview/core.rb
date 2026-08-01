@@ -19,7 +19,7 @@ module SceneTextureSwitcher
   module OverviewPreview
     extend self
 
-    VERSION = '1.2.0-rc.4'
+    VERSION = '1.2.0-rc.5'
 
     def activate
       if @dialog && @dialog.visible?
@@ -390,7 +390,7 @@ module SceneTextureSwitcher
   unless file_loaded?(__FILE__)
     menu = UI.menu('Extensions').add_submenu('Scene TextureSwitch')
     menu.add_item('Open Scene TextureSwitch') { OverviewPreview.activate }
-    menu.add_item('Settings && Quick Guide…') { OverviewPreview.activate_settings }
+    menu.add_item('Settings + Quick Guide…') { OverviewPreview.activate_settings }
     OverviewPreview.start_scene_monitoring
     file_loaded(__FILE__)
   end
