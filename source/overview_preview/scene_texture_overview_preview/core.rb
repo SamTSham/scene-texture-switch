@@ -20,14 +20,14 @@ module SceneTextureSwitcher
       end
 
       @dialog = UI::HtmlDialog.new({
-        :dialog_title => 'Scene Texture Overview — Development',
+        :dialog_title => 'Scene Textures — Development',
         :preferences_key => 'SceneTextureOverviewPreview',
         :scrollable => false,
         :resizable => true,
-        :width => 430,
-        :height => 520,
-        :min_width => 330,
-        :min_height => 240,
+        :width => 360,
+        :height => 420,
+        :min_width => 300,
+        :min_height => 180,
         :style => UI::HtmlDialog::STYLE_DIALOG
       })
       @dialog.set_file(File.join(__dir__, 'html', 'overview.html'))

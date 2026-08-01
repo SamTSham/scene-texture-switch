@@ -87,3 +87,19 @@ The verified overview now becomes a development editor:
 The picker replaces the unwieldy native 99-item dropdown. This development
 companion now writes scene assignments, but it still never creates, replaces,
 moves, or deletes texture image files.
+
+### dev.5 compact production layout
+
+The successful combined palette is compressed for SketchUp screen economy:
+
+- removes the redundant internal title row;
+- shortens the operating-system window title;
+- places the manual rescan control in the texture-library strip;
+- reduces the library strip and footer to 25 pixels each;
+- reduces ordinary scene rows from 39 to 30 pixels;
+- hides repetitive ready/missing sentences from every row;
+- shows the full status sentence in the footer when a row is selected;
+- reduces the default window to 360 × 420 with a 300 × 180 minimum.
+
+The rescan button remains because external Finder and Photoshop file changes do
+not reliably generate SketchUp scene events.

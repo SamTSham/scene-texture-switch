@@ -28,3 +28,5 @@
 - Combined overview and assignment in `dev.4` with an internal scrollable cue
   picker, off-scene editing, undoable writes, and immediate application only for
   the current scene.
+- Compressed the verified palette in `dev.5`, removing redundant chrome and
+  reducing row height while retaining selected-row details in the footer.
