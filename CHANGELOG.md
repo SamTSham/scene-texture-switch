@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0-rc.7
+
+- Replaced the illustrated setup screenshots with compact, purpose-sized PNGs.
+
 ## 1.2.0-rc.6
 
 - Added an illustrated explanation showing exactly where SketchUp material
