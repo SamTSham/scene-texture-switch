@@ -34,7 +34,7 @@ class MigrationCommandWiringTest < Minitest::Test
   def test_verified_copy_can_be_adopted_later
     source = File.read(File.join(ROOT, 'source', 'overview_preview', 'scene_texture_overview_preview', 'core.rb'))
 
-    assert_includes source, 'Adopt Existing Scene-First Texture Copy…'
+    assert_includes source, 'Adopt Verified Scene-First Copy…'
     assert_includes source, 'adopt_existing_scene_first_copy'
     assert_includes source, 'VerifiedSceneFirstMigration::REPORT_NAME'
     assert_includes source, 'TextureLibraryStatus.layout(path) == :scene_first'

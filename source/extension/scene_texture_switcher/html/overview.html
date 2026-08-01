@@ -381,12 +381,17 @@
 
       function detailFor(scene) {
         if (scene.status === 'ready') return 'All required textures present';
-        if (scene.status === 'incomplete') return `Missing: ${scene.missing_surfaces.join(', ')}`;
+        if (scene.status === 'incomplete') return `Missing: ${scene.missing_surfaces.map(surfaceDisplay).join(', ')}`;
         if (scene.status === 'conflict') {
           const conflict = scene.conflicts && scene.conflicts.find((item) => item.message);
           return conflict ? conflict.message : 'Texture library needs attention';
         }
         return scene.required_count ? 'No textures prepared' : 'Surface folders unavailable';
+      }
+
+      function surfaceDisplay(surface) {
+        const description = currentData && currentData.surface_labels && currentData.surface_labels[surface];
+        return description ? `${surface} — ${description}` : surface;
       }
 
       function libraryProblem(library) {
@@ -497,8 +502,8 @@
           const tile = document.createElement('button');
           tile.type = 'button';
           tile.className = 'preview-tile';
-          tile.title = `${asset.surface} — ${asset.filename}`;
-          tile.innerHTML = `<img src="${escapeText(asset.url)}" alt="${escapeText(asset.surface)}"><span class="preview-label">${escapeText(asset.surface)}</span>`;
+          tile.title = `${surfaceDisplay(asset.surface)} — ${asset.filename}`;
+          tile.innerHTML = `<img src="${escapeText(asset.url)}" alt="${escapeText(asset.surface)}"><span class="preview-label">${escapeText(surfaceDisplay(asset.surface))}</span>`;
           tile.addEventListener('mouseenter', () => { activePreviewAsset = asset; });
           tile.addEventListener('focus', () => { activePreviewAsset = asset; });
           tile.addEventListener('click', () => zoomPreview(asset));

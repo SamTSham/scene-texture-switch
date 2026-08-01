@@ -24,6 +24,7 @@ Dir.mktmpdir('scene-texture-overview-preview') do |stage|
   FileUtils.cp(File.join(SHARED_SOURCE, 'scene_marker_name.rb'), folder)
   FileUtils.cp(File.join(SHARED_SOURCE, 'scene_marker_sync.rb'), folder)
   FileUtils.cp(File.join(SHARED_SOURCE, 'preview_assets.rb'), folder)
+  FileUtils.cp(File.join(SHARED_SOURCE, 'surface_labels.rb'), folder)
   FileUtils.cp(File.join(ROOT, 'lib', 'scene_texture_switcher', 'legacy_library_scanner.rb'), folder)
   FileUtils.cp(File.join(ROOT, 'lib', 'scene_texture_switcher', 'migration_planner.rb'), folder)
   FileUtils.cp(File.join(ROOT, 'lib', 'scene_texture_switcher', 'verified_scene_first_migration.rb'), folder)

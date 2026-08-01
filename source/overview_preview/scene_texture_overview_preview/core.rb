@@ -12,17 +12,19 @@ require File.join(__dir__, 'scene_first_bridge')
 require File.join(__dir__, 'scene_marker_name')
 require File.join(__dir__, 'scene_marker_sync')
 require File.join(__dir__, 'preview_assets')
+require File.join(__dir__, 'surface_labels')
 require File.join(__dir__, 'legacy_library_scanner')
 require File.join(__dir__, 'migration_planner')
 require File.join(__dir__, 'verified_scene_first_migration')
 
 module SceneTextureSwitcher
-  # Standalone development companion for the guarded migration and editor.
+  # Unified offline controller for switching, assignment, organisation, and help.
   module OverviewPreview
     extend self
 
+    VERSION = '1.2.0-rc.1'
+
     def activate
-      SceneFirstBridge.install
       if @dialog && @dialog.visible?
         @dialog.bring_to_front
         refresh(@dialog)
@@ -30,8 +32,8 @@ module SceneTextureSwitcher
       end
 
       @dialog = UI::HtmlDialog.new({
-        :dialog_title => 'Scene Textures — Development',
-        :preferences_key => 'SceneTextureOverviewPreview',
+        :dialog_title => 'Scene Textures',
+        :preferences_key => 'SceneTexturesPalette',
         :scrollable => false,
         :resizable => true,
         :width => 360,
@@ -71,6 +73,66 @@ module SceneTextureSwitcher
       sync_scene_markers
     end
 
+    def activate_settings
+      if @settings_dialog && @settings_dialog.visible?
+        @settings_dialog.bring_to_front
+        refresh_settings
+        return
+      end
+
+      @settings_dialog = UI::HtmlDialog.new({
+        :dialog_title => 'Scene Textures — Settings & Guide',
+        :preferences_key => 'SceneTextureSettings',
+        :scrollable => true,
+        :resizable => true,
+        :width => 470,
+        :height => 590,
+        :min_width => 380,
+        :min_height => 360,
+        :style => UI::HtmlDialog::STYLE_DIALOG
+      })
+      @settings_dialog.set_file(File.join(__dir__, 'html', 'settings.html'))
+      @settings_dialog.add_action_callback('requestSettings') { |_context| refresh_settings }
+      @settings_dialog.add_action_callback('revealLibrary') { |_context| reveal_library }
+      @settings_dialog.add_action_callback('migrateLibrary') { |_context| migrate_scene_first_copy }
+      @settings_dialog.add_action_callback('adoptLibrary') { |_context| adopt_existing_scene_first_copy }
+      @settings_dialog.add_action_callback('saveSurfaceLabels') do |_context, json|
+        save_surface_labels(json)
+      end
+      @settings_dialog.set_on_closed { @settings_dialog = nil }
+      @settings_dialog.show
+    end
+
+    def refresh_settings
+      return unless @settings_dialog
+
+      root = current_library_root
+      layout = root ? TextureLibraryStatus.layout(root) : :missing
+      surfaces = root ? PreviewAssets.surface_names(root) : []
+      snapshot = {
+        version: VERSION,
+        layout_label: { scene_first: 'Scene-first', legacy: 'Legacy surface-first', mixed: 'Mixed — needs attention' }[layout] || 'Not found',
+        library_path: root,
+        surfaces: surfaces,
+        labels: SurfaceLabels.load(root)
+      }
+      @settings_dialog.execute_script("SceneTextureSettings.render(#{JSON.generate(snapshot)})")
+    rescue StandardError => error
+      puts "[SceneTextures] Settings refresh failed: #{error.class}: #{error.message}"
+    end
+
+    def save_surface_labels(json)
+      root = current_library_root
+      return UI.messagebox('No texture library is associated with this model.') unless root
+
+      SurfaceLabels.save(root, JSON.parse(json.to_s))
+      refresh_settings
+      refresh(@dialog)
+      @settings_dialog.execute_script('SceneTextureSettings.saved()') if @settings_dialog
+    rescue JSON::ParserError, StandardError => error
+      UI.messagebox("Surface descriptions were not saved.\n\n#{error.message}")
+    end
+
     def refresh(dialog = @dialog)
       return unless dialog
 
@@ -98,20 +160,10 @@ module SceneTextureSwitcher
 
     def apply_current_texture(cue)
       model = Sketchup.active_model
-      preferred = LibraryAssociation.folder_name(model)
-      if preferred && !model.path.to_s.empty?
-        discovery = TextureLibraryStatus.discover(File.dirname(model.path), preferred)
-        if discovery[:root] && TextureLibraryStatus.layout(discovery[:root]) == :scene_first
-          TextureApplier.apply(model, discovery[:root], cue)
-          return
-        end
-      end
+      root = current_library_root
+      return unless root
 
-      if defined?(SceneTextureSwitcher::Core) && SceneTextureSwitcher::Core.respond_to?(:apply_all_textures)
-        SceneTextureSwitcher::Core.apply_all_textures(cue)
-      else
-        puts '[SceneTextureOverview] Assignment saved; production switcher is unavailable for immediate application.'
-      end
+      TextureApplier.apply(model, root, cue)
     end
 
     def reload_current_scene_textures
@@ -265,7 +317,6 @@ module SceneTextureSwitcher
       model.start_operation('Adopt Scene Texture Library', true)
       LibraryAssociation.set(model, folder_name)
       model.commit_operation
-      SceneFirstBridge.install
       scene = model.pages.selected_page
       if scene
         cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
@@ -374,18 +425,40 @@ module SceneTextureSwitcher
       puts "[SceneTextureOverviewPreview] Could not detach observer: #{error.message}"
       @observed_pages = nil
     end
+
+    def on_scene_changed
+      scene = Sketchup.active_model.pages.selected_page
+      return unless scene
+
+      cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
+      apply_current_texture(TextureLibraryStatus.normalize_cue(cue))
+      schedule_refresh if @dialog
+    end
+
+    def start_scene_polling
+      return if @scene_polling_started
+
+      @scene_polling_started = true
+      @last_scene_identity = nil
+      UI.start_timer(1.0, true) do
+        current = Sketchup.active_model.pages.selected_page
+        identity = current ? current.object_id : nil
+        next unless identity && identity != @last_scene_identity
+
+        @last_scene_identity = identity
+        on_scene_changed
+      end
+    end
   end
 
   unless file_loaded?(__FILE__)
-    UI.menu('Extensions').add_item('Scene Texture Overview — Development') {
-      OverviewPreview.activate
-    }
-    UI.menu('Extensions').add_item('Create Verified Scene-First Texture Copy…') {
-      OverviewPreview.migrate_scene_first_copy
-    }
-    UI.menu('Extensions').add_item('Adopt Existing Scene-First Texture Copy…') {
-      OverviewPreview.adopt_existing_scene_first_copy
-    }
+    menu = UI.menu('Extensions').add_submenu('Scene Textures')
+    menu.add_item('Open Scene Textures') { OverviewPreview.activate }
+    menu.add_item('Settings & Quick Guide…') { OverviewPreview.activate_settings }
+    menu.add_separator
+    menu.add_item('Create Verified Scene-First Copy…') { OverviewPreview.migrate_scene_first_copy }
+    menu.add_item('Adopt Verified Scene-First Copy…') { OverviewPreview.adopt_existing_scene_first_copy }
+    OverviewPreview.start_scene_polling
     file_loaded(__FILE__)
   end
 end

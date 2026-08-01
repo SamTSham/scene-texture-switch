@@ -46,3 +46,7 @@
   pixel dimensions, and file size to the large preview in `dev.11`.
 - Added a compact cross-platform texture-folder reveal control and amber
   per-surface pixel-dimension consistency warnings in `dev.12`.
+- Unified switching, assignment, migration, previews, and settings behind one
+  Scene Textures submenu for `1.2.0-rc.1`; added an offline Quick Guide,
+  project-carried surface descriptions, a retirement shim for the former
+  companion extension, and publishable RBZ packaging.

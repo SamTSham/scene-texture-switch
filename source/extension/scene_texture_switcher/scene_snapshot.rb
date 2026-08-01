@@ -3,6 +3,7 @@
 require File.join(__dir__, 'texture_library_status') unless defined?(SceneTextureSwitcher::TextureLibraryStatus)
 require File.join(__dir__, 'texture_applier') unless defined?(SceneTextureSwitcher::TextureApplier)
 require File.join(__dir__, 'preview_assets') unless defined?(SceneTextureSwitcher::PreviewAssets)
+require File.join(__dir__, 'surface_labels') unless defined?(SceneTextureSwitcher::SurfaceLabels)
 
 module SceneTextureSwitcher
   # Converts SketchUp pages and texture readiness into plain serializable data
@@ -16,7 +17,9 @@ module SceneTextureSwitcher
     def build(model, discovery)
       selected = model.pages.selected_page
       root = discovery[:root]
-      dimension_warnings = root ? dimension_warnings(root) : {}
+      dimensions = root ? dimension_analysis(root) : { warnings: {}, assets: {} }
+      dimension_warnings = dimensions[:warnings]
+      surface_labels = root ? SurfaceLabels.load(root) : {}
 
       rows = model.pages.each_with_index.map do |page, index|
         cue = TextureLibraryStatus.normalize_cue(
@@ -44,7 +47,8 @@ module SceneTextureSwitcher
         saved: saved_model?(model),
         library: serialize_discovery(discovery),
         scenes: rows,
-        texture_states: texture_states(root, discovery, dimension_warnings),
+        texture_states: texture_states(root, discovery, dimension_warnings, dimensions[:assets]),
+        surface_labels: surface_labels,
         summary: summarize(rows)
       }
     end
@@ -108,7 +112,7 @@ module SceneTextureSwitcher
       }
     end
 
-    def texture_states(root, discovery, dimension_warnings = {})
+    def texture_states(root, discovery, dimension_warnings = {}, assets_by_cue = {})
       (1..99).map do |number|
         cue = format('%02d', number)
         readiness = root ? TextureLibraryStatus.state(root, cue) : unavailable_state(cue, discovery)
@@ -120,12 +124,16 @@ module SceneTextureSwitcher
           present_count: readiness[:present_count],
           required_count: readiness[:required_count],
           conflicts: readiness[:conflicts],
-          preview_files: root ? PreviewAssets.for_state(root, cue) : []
+          preview_files: root ? assets_by_cue.fetch(cue) { PreviewAssets.for_state(root, cue) } : []
         }
       end
     end
 
     def dimension_warnings(root)
+      dimension_analysis(root)[:warnings]
+    end
+
+    def dimension_analysis(root)
       assets_by_cue = (1..99).each_with_object({}) do |number, result|
         cue = format('%02d', number)
         result[cue] = PreviewAssets.for_state(root, cue)
@@ -155,7 +163,7 @@ module SceneTextureSwitcher
           }
         end
       end
-      warnings
+      { warnings: warnings, assets: assets_by_cue }
     end
 
     def with_dimension_warning(readiness, warnings)

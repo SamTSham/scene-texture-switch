@@ -60,6 +60,10 @@ module SceneTextureSwitcher
       nil
     end
 
+    def surface_names(root)
+      surfaces(root, TextureLibraryStatus.layout(root))
+    end
+
     private
 
     def human_size(bytes)

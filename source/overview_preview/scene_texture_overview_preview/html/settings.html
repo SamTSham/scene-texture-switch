@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scene Textures Settings</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f4f4f3;--panel:#fff;--text:#171717;--muted:#707070;--line:#d8d8d6;--accent:#2c76c7}
+    @media(prefers-color-scheme:dark){:root{--bg:#282828;--panel:#323232;--text:#f0f0f0;--muted:#aaa;--line:#4a4a4a}}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    header{position:sticky;top:0;display:flex;gap:4px;padding:7px;border-bottom:1px solid var(--line);background:var(--panel)}
+    button{border:1px solid var(--line);border-radius:5px;padding:5px 8px;background:var(--panel);color:inherit;font:inherit}button:hover{border-color:var(--accent)}
+    .tab.active{background:var(--accent);border-color:var(--accent);color:#fff}.view{padding:12px}.view[hidden]{display:none}
+    h2{margin:0 0 8px;font-size:15px}h3{margin:16px 0 5px;font-size:12px}p{margin:5px 0;color:var(--muted)}
+    .facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--panel)}
+    .facts span:nth-child(odd){color:var(--muted)}.path{overflow-wrap:anywhere}
+    .actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+    .surface-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:7px;align-items:center;margin:5px 0}
+    input{width:100%;border:1px solid var(--line);border-radius:5px;padding:5px 7px;background:var(--panel);color:inherit;font:inherit}
+    footer{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-top:1px solid var(--line);background:var(--panel);color:var(--muted)}
+    strong{color:var(--text)}ul{margin:5px 0;padding-left:19px;color:var(--muted)}code{color:var(--text)}
+  </style>
+</head>
+<body>
+  <header><button class="tab active" data-view="settings">Settings</button><button class="tab" data-view="guide">Quick guide / FAQ</button></header>
+  <section class="view" id="settings">
+    <h2>Project texture library</h2>
+    <div class="facts"><span>Version</span><strong id="version">—</strong><span>Organisation</span><strong id="layout">—</strong><span>Location</span><span class="path" id="path">—</span></div>
+    <div class="actions"><button id="reveal">Reveal in Finder</button><button id="migrate">Create scene-first copy…</button><button id="adopt">Adopt verified copy…</button></div>
+    <h2>Surface descriptions</h2>
+    <p>Optional descriptions improve orientation. Technical material and file names remain unchanged.</p>
+    <div id="surfaces"></div>
+  </section>
+  <section class="view" id="guide" hidden>
+    <h2>The whole principle</h2>
+    <p>Name controlled SketchUp materials <code>Surface01</code>, <code>Surface02</code>, and so on. Every scene chooses one numbered texture state. Replace those images as the design develops; Scene Textures changes them with the scenes while preserving material mapping.</p>
+    <h3>Files</h3><ul><li>PNG is preferred; JPG and JPEG are accepted.</li><li>PSD and other working files may remain beside the outputs.</li><li>Use matching pixel dimensions across all states of one surface.</li><li>1024 px is the safest shared SketchUp baseline; larger images depend on graphics settings and hardware.</li></ul>
+    <h3>Palette</h3><ul><li>Click a texture number to assign a state without changing scene.</li><li>Double-click a row to visit that scene.</li><li>Hover a number for thumbnails; press <code>z</code> or click for a large preview.</li><li>The circular arrow reloads edited images for the current scene.</li></ul>
+    <h3>Status</h3><ul><li>Black: ready.</li><li>Red: incomplete.</li><li>Grey: missing.</li><li>Amber: conflict or housekeeping warning.</li></ul>
+    <h3>Safety</h3><p>Migration creates and verifies a separate copy. It never rearranges the only working texture library.</p>
+  </section>
+  <footer><span id="message">Descriptions are stored with this texture library.</span><button id="save">Save descriptions</button></footer>
+  <script>
+    (()=>{
+      let data=null;
+      const byId=id=>document.getElementById(id);
+      document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(item=>item.classList.toggle('active',item===tab));
+        document.querySelectorAll('.view').forEach(view=>view.hidden=view.id!==tab.dataset.view);
+        byId('save').hidden=tab.dataset.view!=='settings';
+      }));
+      function render(snapshot){
+        data=snapshot;byId('version').textContent=snapshot.version;byId('layout').textContent=snapshot.layout_label;byId('path').textContent=snapshot.library_path||'No library found';
+        const host=byId('surfaces');host.innerHTML='';
+        snapshot.surfaces.forEach(surface=>{const row=document.createElement('label');row.className='surface-row';const name=document.createElement('strong');name.textContent=surface;const input=document.createElement('input');input.value=snapshot.labels[surface]||'';input.placeholder='Optional description';input.dataset.surface=surface;row.append(name,input);host.appendChild(row);});
+        if(!snapshot.surfaces.length)host.innerHTML='<p>No Surface## textures found yet.</p>';
+      }
+      function saved(){byId('message').textContent='Surface descriptions saved.';setTimeout(()=>byId('message').textContent='Descriptions are stored with this texture library.',2200)}
+      window.SceneTextureSettings={render,saved};
+      byId('reveal').addEventListener('click',()=>window.sketchup&&window.sketchup.revealLibrary());
+      byId('migrate').addEventListener('click',()=>window.sketchup&&window.sketchup.migrateLibrary());
+      byId('adopt').addEventListener('click',()=>window.sketchup&&window.sketchup.adoptLibrary());
+      byId('save').addEventListener('click',()=>{const labels={};document.querySelectorAll('input[data-surface]').forEach(input=>labels[input.dataset.surface]=input.value);if(window.sketchup)window.sketchup.saveSurfaceLabels(JSON.stringify(labels));});
+      window.addEventListener('load',()=>{
+        if(window.sketchup){window.sketchup.requestSettings();return}
+        if(new URLSearchParams(window.location.search).has('preview'))render({version:'1.2.0-rc.1',layout_label:'Scene-first',library_path:'/Projects/Hotel/Textures — Hotel',surfaces:['Surface01','Surface02','Surface03'],labels:{Surface01:'Rear LED wall',Surface02:'Projection gauze'}});
+      });
+    })();
+  </script>
+</body>
+</html>
