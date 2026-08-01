@@ -15,7 +15,7 @@
     .facts span:nth-child(odd){color:var(--muted)}.path{overflow-wrap:anywhere}.actions{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 15px}
     .surface-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:7px;align-items:center;margin:5px 0}input{width:100%;border:1px solid var(--line);border-radius:5px;padding:5px 7px;background:var(--panel);color:inherit;font:inherit}
     footer{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-top:1px solid var(--line);background:var(--panel);color:var(--muted)}
-    strong,code{color:var(--text)}ul,ol{margin:5px 0;padding-left:20px;color:var(--muted)}pre{overflow:auto;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font-size:11px}
+    strong,code{color:var(--text)}ul,ol{margin:5px 0;padding-left:20px;color:var(--muted)}pre{overflow:auto;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font-size:11px}.guide-image{display:block;width:100%;height:auto;margin:8px 0;border:1px solid var(--line);border-radius:6px}.guide-image.portrait{width:min(100%,310px);margin-left:auto;margin-right:auto}
   </style>
 </head>
 <body>
@@ -52,8 +52,16 @@
         └── Surface02.png</pre>
     <p>The texture folder may be called <code>textures</code>, <code>textures — Hamlet</code>, or anything else beginning with the word <code>textures</code>. The rest of its name is only for your orientation.</p>
 
-    <h2>Five-minute setup</h2>
+    <h2>Three-minute setup</h2>
     <ol><li>Save the SketchUp model.</li><li>Put the supplied starter texture folder beside the <code>.skp</code> file.</li><li>Name controlled SketchUp materials <code>Surface01</code>, <code>Surface02</code>, and so on.</li><li>Edit or replace the supplied placeholder pictures while keeping their filenames.</li><li>Open Scene TextureSwitch and choose a picture-set number for each scene.</li></ol>
+
+    <h2>Where to enter the Surface name</h2>
+    <p><code>Surface01</code> is the name of the <strong>SketchUp material</strong>, not the face, group, component, tag or image file.</p>
+    <ol><li>Open SketchUp's Materials/Colors panel, choose <strong>Colors In Model</strong>, and select the material used on the surface.</li></ol>
+    <img class="guide-image" src="../guide/01-select-material-in-model.png" alt="Select the surface material in Colors In Model">
+    <ol start="2"><li>Open <strong>Edit Material</strong> and enter <code>Surface01</code> in the <strong>Name</strong> field. Continue with <code>Surface02</code>, <code>Surface03</code>, and so on. Use two digits and no spaces.</li></ol>
+    <img class="guide-image portrait" src="../guide/02-name-material-surface-number.png" alt="Enter Surface02 in the material Name field">
+    <p>The exact buttons vary slightly between SketchUp versions and operating systems, but the material <strong>Name</strong> field is the important part.</p>
 
     <h2>Everyday use</h2>
     <ul><li>Click a number to assign pictures without visiting that scene.</li><li>Double-click a row to visit its SketchUp scene.</li><li>Hover a number for thumbnails; press <code>z</code> or click for a large preview.</li><li>Use the folder button to open the complete texture folder.</li><li>After editing the current pictures, change scene and return—or click the circular reload arrow.</li></ul>
@@ -95,7 +103,7 @@ Surface01/02.png</pre>
       byId('reveal').addEventListener('click',()=>window.sketchup&&window.sketchup.revealLibrary());
       byId('starter').addEventListener('click',()=>window.sketchup&&window.sketchup.revealStarter());
       byId('save').addEventListener('click',()=>{const labels={};document.querySelectorAll('input[data-surface]').forEach(input=>labels[input.dataset.surface]=input.value);if(window.sketchup)window.sketchup.saveSurfaceLabels(JSON.stringify(labels))});
-      window.addEventListener('load',()=>{if(window.sketchup){window.sketchup.requestSettings();return}if(new URLSearchParams(window.location.search).has('preview'))render({version:'1.2.0-rc.5',layout_label:'Organised by scene',library_path:'/Projects/Hotel/textures — Hotel',surfaces:['Surface01','Surface02'],labels:{Surface01:'Rear LED wall'}})});
+      window.addEventListener('load',()=>{if(window.sketchup){window.sketchup.requestSettings();return}if(new URLSearchParams(window.location.search).has('preview'))render({version:'1.2.0-rc.6',layout_label:'Organised by scene',library_path:'/Projects/Hotel/textures — Hotel',surfaces:['Surface01','Surface02'],labels:{Surface01:'Rear LED wall'}})});
     })();
   </script>
 </body>

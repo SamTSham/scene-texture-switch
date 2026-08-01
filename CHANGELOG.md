@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0-rc.6
+
+- Added an illustrated explanation showing exactly where SketchUp material
+  names such as `Surface01` are entered.
+- Included both guide images in the installed detailed guide and packaged
+  README.
+
 ## 1.2.0-rc.5
 
 - Changed the macOS menu label to `Settings + Quick Guide…` because SketchUp

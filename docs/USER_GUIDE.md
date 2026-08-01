@@ -35,7 +35,7 @@ The texture folder may be called `textures`, `textures — Hamlet`, or anything
 else beginning with the word `textures`. The rest of its name is only for your
 orientation.
 
-## Five-minute setup
+## Three-minute setup
 
 1. Save the SketchUp model.
 2. Put the supplied starter texture folder beside the `.skp` file.
@@ -43,6 +43,26 @@ orientation.
 4. Edit or replace the placeholder pictures while keeping their filenames.
 5. Open **Extensions → Scene TextureSwitch → Open Scene TextureSwitch** and
    choose a picture-set number for each scene.
+
+## Where to enter the Surface name
+
+`Surface01` is the name of the **SketchUp material**, not the face, group,
+component, tag or image file.
+
+1. Open SketchUp's **Materials/Colors** panel and choose **Colors In Model**.
+   Select the material used on the surface you want Scene TextureSwitch to
+   control.
+
+   ![Select the surface material in Colors In Model](guide/01-select-material-in-model.png)
+
+2. Open **Edit Material** and enter `Surface01` in the **Name** field. Name the
+   next controlled material `Surface02`, then `Surface03`, and so on. Use two
+   digits and do not add spaces.
+
+   ![Enter Surface02 in the material Name field](guide/02-name-material-surface-number.png)
+
+The exact buttons vary slightly between SketchUp versions and operating
+systems, but the material **Name** field is the important part.
 
 ## Everyday use
 
