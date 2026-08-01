@@ -4,7 +4,7 @@ Controlled continuation of the published, working Scene Texture Switcher v1.3.
 
 ## Current state
 
-The repository structure and specifications are ready. The canonical v1.3 source still needs to be imported from the original working RBZ or ZIP. No replacement `core.rb` has been invented.
+The canonical v1.3 source has been imported from the original working RBZ and recorded by checksum. No replacement `core.rb` has been invented.
 
 ## Non-negotiable baseline
 
@@ -22,12 +22,10 @@ See `docs/PROJECT_RULES.md` and `docs/REGRESSION_CHECKLIST.md`.
 
 ## First development milestone
 
-1. Import the exact published v1.3 package into `vendor/canonical_v1_3/`.
-2. Record its archive checksum and file manifest.
-3. Copy it unchanged into the working extension tree.
-4. Establish a repeatable baseline test in the existing `Texture-Test.skp` model.
-5. Add scene-name folder mapping as an isolated service.
-6. Add the compact status overview without modifying the switching engine.
+1. Confirm the imported v1.3 baseline in the existing `Texture-Test.skp` model.
+2. Integrate the tested scene-name folder service without changing switching behaviour.
+3. Add a persistent scene-to-folder registry.
+4. Add the compact status overview without modifying the switching engine.
 
 ## Planned user-facing behaviour
 
@@ -55,4 +53,3 @@ The overview will show every scene with a status:
 - grey: missing everywhere.
 
 Interface rendering is not allowed to own or rewrite switching logic.
-

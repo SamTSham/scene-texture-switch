@@ -7,4 +7,6 @@
 - Specified scene-name folder sanitising, duplicate suffixes, and stable identity mapping.
 - Specified compact scene status overview and regression gates.
 - Deferred all menu polish until core behaviour and the first two organisational features pass regression testing.
-
+- Imported and checksum-locked the published v1.3 RBZ.
+- Added an isolated scene-folder sanitiser with point-suffix duplicate handling.
+- Added automated tests for unsafe characters, reserved names, duplicates, and length limits.

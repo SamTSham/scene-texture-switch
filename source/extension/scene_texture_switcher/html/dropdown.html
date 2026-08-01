@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Select Texture Cue</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    select, button { font-size: 14px; padding: 6px; margin-top: 10px; width: 100%; }
+  </style>
+</head>
+<body>
+  <h3>Select Scene Texture Cue</h3>
+  <select id="cueSelector">
+    <!-- Options populated dynamically -->
+  </select>
+  <button onclick="submitCue()">Set Cue</button>
+
+  <script>
+    function submitCue() {
+      const cue = document.getElementById('cueSelector').value;
+      window.sketchup.setCue(cue);
+    }
+
+    // Populate dropdown 01–99
+    let dropdown = document.getElementById('cueSelector');
+    for (let i = 1; i <= 99; i++) {
+      let val = i.toString().padStart(2, '0');
+      let opt = document.createElement('option');
+      opt.value = val;
+      opt.text = "Cue " + val;
+      dropdown.add(opt);
+    }
+  </script>
+</body>
+</html>
