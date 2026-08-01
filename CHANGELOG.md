@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0-rc.4
+
+- Changed scene detection to SketchUp's native frame-change notification so
+  destination textures apply at the start of a scene transition.
+- Retained a one-second object-based safety check for initial loading and
+  observer fallback.
+- Added coverage for long transitions, repeated animation frames, and separate
+  scenes with duplicate names.
+
 ## Unreleased
 
 - Created guarded continuation project.

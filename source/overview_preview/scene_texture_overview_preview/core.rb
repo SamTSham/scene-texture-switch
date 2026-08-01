@@ -12,13 +12,14 @@ require File.join(__dir__, 'scene_marker_name')
 require File.join(__dir__, 'scene_marker_sync')
 require File.join(__dir__, 'preview_assets')
 require File.join(__dir__, 'surface_labels')
+require File.join(__dir__, 'scene_transition_observer')
 
 module SceneTextureSwitcher
   # Unified offline controller for switching, assignment, organisation, and help.
   module OverviewPreview
     extend self
 
-    VERSION = '1.2.0-rc.3'
+    VERSION = '1.2.0-rc.4'
 
     def activate
       if @dialog && @dialog.visible?
@@ -334,27 +335,54 @@ module SceneTextureSwitcher
       @observed_pages = nil
     end
 
-    def on_scene_changed
-      scene = Sketchup.active_model.pages.selected_page
+    def on_scene_changed(scene = Sketchup.active_model.pages.selected_page)
       return unless scene
 
+      @last_scene_identity = scene_identity(Sketchup.active_model, scene)
       cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
       apply_current_texture(TextureLibraryStatus.normalize_cue(cue))
       schedule_refresh if @dialog
     end
 
-    def start_scene_polling
-      return if @scene_polling_started
+    def on_scene_transition_started(destination_scene)
+      on_scene_changed(destination_scene)
+    end
 
-      @scene_polling_started = true
+    def scene_identity(model, scene)
+      return nil unless model && scene
+
+      [model.object_id, scene.object_id]
+    end
+
+    def start_scene_monitoring
+      return if @scene_monitoring_started
+
+      @scene_monitoring_started = true
+      @scene_transition_observer = SceneTransitionObserver.new(self)
+      @scene_transition_observer_id = Sketchup::Pages.add_frame_change_observer(
+        @scene_transition_observer
+      )
+      start_scene_safety_polling
+    rescue StandardError => error
+      puts "[SceneTextureSwitch] Native scene observer unavailable: #{error.message}"
+      start_scene_safety_polling
+    end
+
+    # Retained as a low-frequency safety net and to initialise a model that was
+    # already open when the extension loaded. Native transition events lead.
+    def start_scene_safety_polling
+      return if @scene_safety_polling_started
+
+      @scene_safety_polling_started = true
       @last_scene_identity = nil
       UI.start_timer(1.0, true) do
-        current = Sketchup.active_model.pages.selected_page
-        identity = current ? current.object_id : nil
+        model = Sketchup.active_model
+        current = model.pages.selected_page
+        identity = scene_identity(model, current)
         next unless identity && identity != @last_scene_identity
 
         @last_scene_identity = identity
-        on_scene_changed
+        on_scene_changed(current)
       end
     end
   end
@@ -363,7 +391,7 @@ module SceneTextureSwitcher
     menu = UI.menu('Extensions').add_submenu('Scene TextureSwitch')
     menu.add_item('Open Scene TextureSwitch') { OverviewPreview.activate }
     menu.add_item('Settings && Quick Guide…') { OverviewPreview.activate_settings }
-    OverviewPreview.start_scene_polling
+    OverviewPreview.start_scene_monitoring
     file_loaded(__FILE__)
   end
 end

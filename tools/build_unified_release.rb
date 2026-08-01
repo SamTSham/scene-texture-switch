@@ -4,7 +4,7 @@ require 'fileutils'
 require 'tmpdir'
 
 ROOT = File.expand_path('..', __dir__)
-VERSION = '1.2.0-rc.3'
+VERSION = '1.2.0-rc.4'
 OUTPUT = ARGV[0] || File.join(ROOT, 'builds', "SceneTextureSwitch_#{VERSION}.rbz")
 PREVIEW_SOURCE = File.join(ROOT, 'source', 'overview_preview')
 SHARED_SOURCE = File.join(ROOT, 'source', 'extension', 'scene_texture_switcher')
@@ -28,6 +28,7 @@ Dir.mktmpdir('scene-textures-release') do |stage|
     scene_assignment.rb library_association.rb texture_applier.rb
     scene_marker_name.rb scene_marker_sync.rb
     preview_assets.rb surface_labels.rb
+    scene_transition_observer.rb
   ].each { |name| FileUtils.cp(File.join(SHARED_SOURCE, name), folder) }
   FileUtils.cp(File.join(SHARED_SOURCE, 'html', 'overview.html'), File.join(folder, 'html'))
 
