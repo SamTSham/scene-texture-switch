@@ -34,3 +34,6 @@
   legend and contextual hover guidance.
 - Made the reload arrow reapply current-scene images from disk and added
   deliberate row double-click scene activation in `dev.7`.
+- Added verified scene-first copying, marker generation, explicit model-library
+  association, dual-layout readiness, and reversible scene-first switching in
+  `dev.8`.

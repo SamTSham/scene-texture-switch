@@ -5,6 +5,13 @@ require File.join(__dir__, 'texture_library_status')
 require File.join(__dir__, 'scene_snapshot')
 require File.join(__dir__, 'overview_pages_observer')
 require File.join(__dir__, 'scene_assignment')
+require File.join(__dir__, 'library_association')
+require File.join(__dir__, 'texture_applier')
+require File.join(__dir__, 'scene_first_bridge')
+require File.join(__dir__, 'scene_marker_name')
+require File.join(__dir__, 'legacy_library_scanner')
+require File.join(__dir__, 'migration_planner')
+require File.join(__dir__, 'verified_scene_first_migration')
 
 module SceneTextureSwitcher
   # Standalone read-only test companion. It does not start a timer, apply a
@@ -13,6 +20,7 @@ module SceneTextureSwitcher
     extend self
 
     def activate
+      SceneFirstBridge.install
       if @dialog && @dialog.visible?
         @dialog.bring_to_front
         refresh(@dialog)
@@ -56,7 +64,8 @@ module SceneTextureSwitcher
 
       model = Sketchup.active_model
       project_dir = model.path.to_s.empty? ? nil : File.dirname(model.path)
-      discovery = TextureLibraryStatus.discover(project_dir)
+      preferred = LibraryAssociation.folder_name(model)
+      discovery = TextureLibraryStatus.discover(project_dir, preferred)
       snapshot = SceneSnapshot.build(model, discovery)
       dialog.execute_script("SceneTextureOverview.render(#{JSON.generate(snapshot)})")
     rescue StandardError => error
@@ -75,6 +84,16 @@ module SceneTextureSwitcher
     end
 
     def apply_current_texture(cue)
+      model = Sketchup.active_model
+      preferred = LibraryAssociation.folder_name(model)
+      if preferred && !model.path.to_s.empty?
+        discovery = TextureLibraryStatus.discover(File.dirname(model.path), preferred)
+        if discovery[:root] && TextureLibraryStatus.layout(discovery[:root]) == :scene_first
+          TextureApplier.apply(model, discovery[:root], cue)
+          return
+        end
+      end
+
       if defined?(SceneTextureSwitcher::Core) && SceneTextureSwitcher::Core.respond_to?(:apply_all_textures)
         SceneTextureSwitcher::Core.apply_all_textures(cue)
       else
@@ -98,6 +117,88 @@ module SceneTextureSwitcher
 
       model.pages.selected_page = page unless page.equal?(model.pages.selected_page)
       schedule_refresh
+    end
+
+    def migrate_scene_first_copy
+      model = Sketchup.active_model
+      if model.path.to_s.empty?
+        UI.messagebox('Save the SketchUp model before creating a scene-first texture copy.')
+        return
+      end
+
+      project_dir = File.dirname(model.path)
+      source = legacy_source(project_dir)
+      unless source
+        UI.messagebox('Exactly one legacy Surface## texture library is required for migration.')
+        return
+      end
+
+      model_label = SceneMarkerName.sanitize(File.basename(model.path, File.extname(model.path)), 80)
+      destination_name = "Textures — #{model_label}"
+      destination = File.join(project_dir, destination_name)
+      if File.exist?(destination)
+        UI.messagebox("The migration destination already exists:\n\n#{destination}\n\nNothing was changed.")
+        return
+      end
+
+      answer = UI.messagebox(
+        "Create a verified scene-first copy?\n\n" \
+        "Source: #{source}\nDestination: #{destination}\n\n" \
+        'The existing texture library will not be changed.',
+        MB_YESNO
+      )
+      return unless answer == IDYES
+
+      scan = LegacyLibraryScanner.new(source).scan
+      plan = MigrationPlanner.new(scan).plan
+      scenes = scene_records(model)
+      result = VerifiedSceneFirstMigration.new(plan, SceneMarkerName).execute(destination, scenes)
+
+      adopt = UI.messagebox(
+        "Verified copy complete.\n\n" \
+        "Textures copied: #{result[:copied].length}\nScene labels: #{result[:markers].length}\n" \
+        "Report: #{result[:report_path]}\n\n" \
+        'Use this scene-first copy for the current model?',
+        MB_YESNO
+      )
+      adopt_library(model, destination_name) if adopt == IDYES
+      refresh(@dialog)
+    rescue StandardError => error
+      UI.messagebox("Scene-first copy was not completed.\n\n#{error.message}\n\nThe legacy library was not changed.")
+    end
+
+    def adopt_library(model, folder_name)
+      model.start_operation('Adopt Scene Texture Library', true)
+      LibraryAssociation.set(model, folder_name)
+      model.commit_operation
+      SceneFirstBridge.install
+      scene = model.pages.selected_page
+      if scene
+        cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
+        apply_current_texture(TextureLibraryStatus.normalize_cue(cue))
+      end
+    rescue StandardError
+      model.abort_operation
+      raise
+    end
+
+    def legacy_source(project_dir)
+      candidates = Dir.children(project_dir).sort.map do |entry|
+        path = File.join(project_dir, entry)
+        path if File.directory?(path) && entry.match?(TextureLibraryStatus::LIBRARY_NAME) &&
+          TextureLibraryStatus.layout(path) == :legacy
+      end.compact
+      candidates.length == 1 ? candidates.first : nil
+    end
+
+    def scene_records(model)
+      model.pages.each_with_index.map do |page, index|
+        {
+          cue: page.get_attribute('SceneTextureSwitcher', 'texture_index', '01'),
+          name: page.name.to_s,
+          scene_key: SceneAssignment.key_for(page, index)
+        }
+      end
     end
 
     def schedule_refresh
@@ -132,6 +233,9 @@ module SceneTextureSwitcher
   unless file_loaded?(__FILE__)
     UI.menu('Extensions').add_item('Scene Texture Overview — Development') {
       OverviewPreview.activate
+    }
+    UI.menu('Extensions').add_item('Create Verified Scene-First Texture Copy…') {
+      OverviewPreview.migrate_scene_first_copy
     }
     file_loaded(__FILE__)
   end

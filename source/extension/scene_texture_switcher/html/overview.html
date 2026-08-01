@@ -323,6 +323,7 @@
       function libraryProblem(library) {
         if (library.status === 'found') return null;
         if (library.status === 'ambiguous') return `Several texture folders found: ${library.candidates.join(', ')}`;
+        if (library.status === 'associated_missing') return `Chosen texture folder is missing: ${library.preferred_name}`;
         if (library.status === 'error') return library.message || 'Texture folder could not be read';
         return 'No compatible texture folder found beside this model';
       }

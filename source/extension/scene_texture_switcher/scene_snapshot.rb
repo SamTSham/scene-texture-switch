@@ -17,7 +17,7 @@ module SceneTextureSwitcher
         cue = TextureLibraryStatus.normalize_cue(
           page.get_attribute(ATTRIBUTE_DICTIONARY, TEXTURE_INDEX_KEY, '01')
         )
-        readiness = root ? TextureLibraryStatus.legacy_state(root, cue) : unavailable_state(cue, discovery)
+        readiness = root ? TextureLibraryStatus.state(root, cue) : unavailable_state(cue, discovery)
 
         {
           scene_key: scene_key(page, index),
@@ -105,7 +105,7 @@ module SceneTextureSwitcher
     def texture_states(root, discovery)
       (1..99).map do |number|
         cue = format('%02d', number)
-        readiness = root ? TextureLibraryStatus.legacy_state(root, cue) : unavailable_state(cue, discovery)
+        readiness = root ? TextureLibraryStatus.state(root, cue) : unavailable_state(cue, discovery)
         {
           texture_index: cue,
           status: readiness[:status].to_s,

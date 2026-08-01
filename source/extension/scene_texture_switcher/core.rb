@@ -3,6 +3,7 @@ require File.join(__dir__, 'texture_library_status')
 require File.join(__dir__, 'scene_snapshot')
 require File.join(__dir__, 'overview_pages_observer')
 require File.join(__dir__, 'scene_assignment')
+require File.join(__dir__, 'library_association')
 
 module SceneTextureSwitcher
   module Core
@@ -83,7 +84,8 @@ module SceneTextureSwitcher
 
       model = Sketchup.active_model
       project_dir = model.path.to_s.empty? ? nil : File.dirname(model.path)
-      discovery = TextureLibraryStatus.discover(project_dir)
+      preferred = LibraryAssociation.folder_name(model)
+      discovery = TextureLibraryStatus.discover(project_dir, preferred)
       snapshot = SceneSnapshot.build(model, discovery)
       dialog.execute_script("SceneTextureOverview.render(#{JSON.generate(snapshot)})")
     rescue StandardError => error

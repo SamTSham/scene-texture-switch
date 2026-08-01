@@ -126,3 +126,23 @@ Scene rows gain an explicit double-click action:
 - double click activates that SketchUp scene;
 - clicking or double-clicking the texture-number button never activates the
   scene.
+
+### dev.8 verified migration and adoption
+
+The development companion gains a separate Extensions-menu command to create a
+scene-first copy. It requires a saved model and exactly one legacy `Surface##`
+library, refuses an existing destination, and asks before writing.
+
+The copy operation:
+
+- copies PNG, JPG, and JPEG alternatives into `NN/Surface##.ext`;
+- verifies every copy by size and SHA-256;
+- creates sanitised scene marker files containing scene recovery information;
+- writes a complete report inside the copied library;
+- leaves the legacy library unchanged;
+- removes only its own new destination if verification fails.
+
+After successful verification, a second confirmation offers to associate the
+model with the copy. Adoption is undoable. An explicitly associated scene-first
+model routes automatic production switching through a reversible development
+bridge; unassociated models continue through the untouched legacy method.

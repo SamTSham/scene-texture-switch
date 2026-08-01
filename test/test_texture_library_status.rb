@@ -58,6 +58,46 @@ class TextureLibraryStatusTest < Minitest::Test
     end
   end
 
+  def test_association_resolves_several_compatible_folders
+    Dir.mktmpdir do |root|
+      FileUtils.mkdir_p(File.join(root, 'textures'))
+      FileUtils.mkdir_p(File.join(root, 'Textures — Set'))
+
+      result = Status.discover(root, 'Textures — Set')
+
+      assert_equal :found, result[:status]
+      assert result[:associated]
+      assert_equal 'Textures — Set', File.basename(result[:root])
+    end
+  end
+
+  def test_missing_associated_folder_is_not_silently_replaced
+    Dir.mktmpdir do |root|
+      FileUtils.mkdir_p(File.join(root, 'textures'))
+
+      result = Status.discover(root, 'Textures — Missing')
+
+      assert_equal :associated_missing, result[:status]
+      assert_nil result[:root]
+    end
+  end
+
+  def test_scene_first_layout_reports_readiness_and_alternatives
+    Dir.mktmpdir do |root|
+      FileUtils.mkdir_p(File.join(root, '01'))
+      FileUtils.mkdir_p(File.join(root, '02'))
+      File.write(File.join(root, '01', 'Surface01.png'), 'one')
+      File.write(File.join(root, '01', 'Surface02.jpg'), 'two')
+      File.write(File.join(root, '02', 'Surface01.png'), 'one')
+      File.write(File.join(root, '02', 'Surface01.jpg'), 'alternative')
+
+      assert_equal :scene_first, Status.layout(root)
+      assert_equal :ready, Status.state(root, '01')[:status]
+      assert_equal :conflict, Status.state(root, '02')[:status]
+      assert_equal ['Surface02'], Status.state(root, '02')[:missing]
+    end
+  end
+
   private
 
   def write_texture(root, surface, filename)
