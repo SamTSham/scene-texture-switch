@@ -245,7 +245,13 @@ The future plugin could store, per scene:
 
 Nested objects would retain transformations relative to their immediate parent, allowing articulated scenery such as a robot arm, folding unit, curtain system, or nested revolve.
 
-This stage begins only after reviewing the animation plugin manual and building separate transformation tests. It must not be inserted prematurely into the dependable texture engine.
+The Keyframe Animation 2.2 manual has now been reviewed. Its compact
+Record/Select/Erase/Play workflow, nested local transforms, and per-scene
+transition and delay settings are valuable references. The alignment and
+interface boundaries are recorded in `ANIMATION_ALIGNMENT.md`.
+
+Motion still begins with separate transformation tests. It must not be inserted
+prematurely into the dependable texture engine.
 
 Possible development sequence:
 
