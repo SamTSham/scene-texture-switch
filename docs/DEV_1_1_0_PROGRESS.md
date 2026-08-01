@@ -146,3 +146,8 @@ After successful verification, a second confirmation offers to associate the
 model with the copy. Adoption is undoable. An explicitly associated scene-first
 model routes automatic production switching through a reversible development
 bridge; unassociated models continue through the untouched legacy method.
+
+If adoption is declined after copying, a separate **Adopt Existing Scene-First
+Texture Copy…** command permits later adoption. It accepts exactly one
+scene-first candidate carrying the generated verification report, so inspection
+does not force an immediate decision or require another migration.

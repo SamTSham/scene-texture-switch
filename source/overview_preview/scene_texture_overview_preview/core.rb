@@ -182,6 +182,41 @@ module SceneTextureSwitcher
       raise
     end
 
+    def adopt_existing_scene_first_copy
+      model = Sketchup.active_model
+      if model.path.to_s.empty?
+        UI.messagebox('Save the SketchUp model before adopting a texture library.')
+        return
+      end
+
+      project_dir = File.dirname(model.path)
+      candidates = Dir.children(project_dir).sort.map do |entry|
+        path = File.join(project_dir, entry)
+        next unless File.directory?(path) && entry.match?(TextureLibraryStatus::LIBRARY_NAME)
+        next unless TextureLibraryStatus.layout(path) == :scene_first
+        next unless File.file?(File.join(path, VerifiedSceneFirstMigration::REPORT_NAME))
+
+        path
+      end.compact
+      unless candidates.length == 1
+        UI.messagebox('Exactly one verified scene-first copy must be beside the model for automatic adoption.')
+        return
+      end
+
+      library = candidates.first
+      answer = UI.messagebox(
+        "Use this verified scene-first copy for the current model?\n\n#{library}\n\n" \
+        'The legacy texture library will remain unchanged.',
+        MB_YESNO
+      )
+      return unless answer == IDYES
+
+      adopt_library(model, File.basename(library))
+      refresh(@dialog)
+    rescue StandardError => error
+      UI.messagebox("The scene-first copy was not adopted.\n\n#{error.message}")
+    end
+
     def legacy_source(project_dir)
       candidates = Dir.children(project_dir).sort.map do |entry|
         path = File.join(project_dir, entry)
@@ -236,6 +271,9 @@ module SceneTextureSwitcher
     }
     UI.menu('Extensions').add_item('Create Verified Scene-First Texture Copy…') {
       OverviewPreview.migrate_scene_first_copy
+    }
+    UI.menu('Extensions').add_item('Adopt Existing Scene-First Texture Copy…') {
+      OverviewPreview.adopt_existing_scene_first_copy
     }
     file_loaded(__FILE__)
   end
