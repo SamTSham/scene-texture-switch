@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0-rc.10
+
+- Replaced inaccurate transparency/opacity starter labels with the scenic-use
+  descriptions `FLOOR Projection` and `BACK Projection`.
+
 ## 1.2.0-rc.9
 
 - Added the minimal `Texture-Test.skp` example beside its matching starter

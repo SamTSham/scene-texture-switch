@@ -19,7 +19,7 @@ module SceneTextureSwitcher
   module OverviewPreview
     extend self
 
-    VERSION = '1.2.0-rc.9'
+    VERSION = '1.2.0-rc.10'
 
     def activate
       if @dialog && @dialog.visible?

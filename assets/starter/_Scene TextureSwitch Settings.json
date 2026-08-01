@@ -1,6 +1,6 @@
 {
   "surface_labels": {
-    "Surface01": "transparent number grid",
-    "Surface02": "opaque inverse number grid"
+    "Surface01": "FLOOR Projection",
+    "Surface02": "BACK Projection"
   }
 }
