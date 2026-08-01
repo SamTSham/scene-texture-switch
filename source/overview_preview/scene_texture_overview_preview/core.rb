@@ -3,6 +3,7 @@
 require 'json'
 require File.join(__dir__, 'texture_library_status')
 require File.join(__dir__, 'scene_snapshot')
+require File.join(__dir__, 'overview_pages_observer')
 
 module SceneTextureSwitcher
   # Standalone read-only test companion. It does not start a timer, apply a
@@ -32,8 +33,12 @@ module SceneTextureSwitcher
       @dialog.add_action_callback('requestSnapshot') do |_action_context|
         refresh(@dialog)
       end
-      @dialog.set_on_closed { @dialog = nil }
+      @dialog.set_on_closed do
+        detach_pages_observer
+        @dialog = nil
+      end
       @dialog.show
+      attach_pages_observer
     end
 
     def refresh(dialog = @dialog)
@@ -46,6 +51,34 @@ module SceneTextureSwitcher
       dialog.execute_script("SceneTextureOverview.render(#{JSON.generate(snapshot)})")
     rescue StandardError => error
       puts "[SceneTextureOverviewPreview] Refresh failed: #{error.class}: #{error.message}"
+    end
+
+    def schedule_refresh
+      return if @refresh_scheduled
+
+      @refresh_scheduled = true
+      UI.start_timer(0.1, false) do
+        @refresh_scheduled = false
+        refresh(@dialog) if @dialog
+      end
+    end
+
+    def attach_pages_observer
+      pages = Sketchup.active_model.pages
+      return if @observed_pages.equal?(pages)
+
+      detach_pages_observer
+      @pages_observer ||= OverviewPagesObserver.new(self)
+      pages.add_observer(@pages_observer)
+      @observed_pages = pages
+    end
+
+    def detach_pages_observer
+      @observed_pages.remove_observer(@pages_observer) if @observed_pages && @pages_observer
+      @observed_pages = nil
+    rescue StandardError => error
+      puts "[SceneTextureOverviewPreview] Could not detach observer: #{error.message}"
+      @observed_pages = nil
     end
   end
 

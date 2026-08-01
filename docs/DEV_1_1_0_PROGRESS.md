@@ -60,3 +60,12 @@ HTML callback context had incorrectly been passed to the refresh method as if it
 were the HtmlDialog itself. `dev.2` retains the actual dialog reference and uses
 the callback context only as the event notification. A source-level regression
 check covers both the standalone preview and future integrated code.
+
+### dev.3 live scene-list refresh
+
+The second live test confirmed that renamed scenes were correct after reopening
+the palette but not while it remained open. `dev.3` attaches SketchUp's
+`PagesObserver` only while the palette is open. Scene renames, additions, and
+removals schedule one short delayed refresh so clustered notifications do not
+cause repeated redraws. Closing the palette detaches the observer. This observer
+updates interface data only; it does not participate in texture switching.

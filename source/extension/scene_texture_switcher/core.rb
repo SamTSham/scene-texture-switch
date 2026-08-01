@@ -1,6 +1,7 @@
 require 'json'
 require File.join(__dir__, 'texture_library_status')
 require File.join(__dir__, 'scene_snapshot')
+require File.join(__dir__, 'overview_pages_observer')
 
 module SceneTextureSwitcher
   module Core
@@ -59,8 +60,12 @@ module SceneTextureSwitcher
       @overview_dialog.add_action_callback('requestSnapshot') do |_action_context|
         refresh_overview(@overview_dialog)
       end
-      @overview_dialog.set_on_closed { @overview_dialog = nil }
+      @overview_dialog.set_on_closed do
+        detach_overview_pages_observer
+        @overview_dialog = nil
+      end
       @overview_dialog.show
+      attach_overview_pages_observer
     end
 
     def refresh_overview(dialog = @overview_dialog)
@@ -73,6 +78,36 @@ module SceneTextureSwitcher
       dialog.execute_script("SceneTextureOverview.render(#{JSON.generate(snapshot)})")
     rescue StandardError => error
       puts "[SceneTextureSwitcher] Overview refresh failed: #{error.class}: #{error.message}"
+    end
+
+    def schedule_refresh
+      return if @overview_refresh_scheduled
+
+      @overview_refresh_scheduled = true
+      UI.start_timer(0.1, false) do
+        @overview_refresh_scheduled = false
+        refresh_overview(@overview_dialog) if @overview_dialog
+      end
+    end
+
+    def attach_overview_pages_observer
+      pages = Sketchup.active_model.pages
+      return if @overview_observed_pages.equal?(pages)
+
+      detach_overview_pages_observer
+      @overview_pages_observer ||= OverviewPagesObserver.new(self)
+      pages.add_observer(@overview_pages_observer)
+      @overview_observed_pages = pages
+    end
+
+    def detach_overview_pages_observer
+      if @overview_observed_pages && @overview_pages_observer
+        @overview_observed_pages.remove_observer(@overview_pages_observer)
+      end
+      @overview_observed_pages = nil
+    rescue StandardError => error
+      puts "[SceneTextureSwitcher] Could not detach overview observer: #{error.message}"
+      @overview_observed_pages = nil
     end
 
     def apply_all_textures(cue)

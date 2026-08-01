@@ -23,3 +23,5 @@
   interface preview for `1.1.0-dev.1`.
 - Repaired the live HtmlDialog snapshot callback after `dev.1` passed its action
   context in place of the dialog reference.
+- Added palette-lifetime scene observation and debounced live refresh for scene
+  renames, additions, and removals in `dev.3`.

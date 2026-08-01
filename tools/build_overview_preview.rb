@@ -4,7 +4,7 @@ require 'fileutils'
 require 'tmpdir'
 
 ROOT = File.expand_path('..', __dir__)
-OUTPUT = ARGV[0] || File.join(ROOT, 'builds', 'SceneTextureOverviewPreview_1.1.0-dev.2.rbz')
+OUTPUT = ARGV[0] || File.join(ROOT, 'builds', 'SceneTextureOverviewPreview_1.1.0-dev.3.rbz')
 PREVIEW_SOURCE = File.join(ROOT, 'source', 'overview_preview')
 SHARED_SOURCE = File.join(ROOT, 'source', 'extension', 'scene_texture_switcher')
 
@@ -16,6 +16,7 @@ Dir.mktmpdir('scene-texture-overview-preview') do |stage|
   FileUtils.cp(File.join(PREVIEW_SOURCE, 'scene_texture_overview_preview', 'core.rb'), folder)
   FileUtils.cp(File.join(SHARED_SOURCE, 'texture_library_status.rb'), folder)
   FileUtils.cp(File.join(SHARED_SOURCE, 'scene_snapshot.rb'), folder)
+  FileUtils.cp(File.join(SHARED_SOURCE, 'overview_pages_observer.rb'), folder)
   FileUtils.cp(File.join(SHARED_SOURCE, 'html', 'overview.html'), File.join(folder, 'html'))
 
   FileUtils.mkdir_p(File.dirname(File.expand_path(OUTPUT)))
