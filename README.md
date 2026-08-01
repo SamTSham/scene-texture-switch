@@ -22,6 +22,8 @@ See `docs/PROJECT_RULES.md` and `docs/REGRESSION_CHECKLIST.md`.
 
 The plain-language version plan is in `docs/DEVELOPMENT_ROADMAP.md`.
 
+Recovered aspirational ideas and rejected detours are evaluated in `docs/FEATURE_BACKLOG.md`.
+
 ## First development milestone
 
 1. Confirm the imported v1.3 baseline in the existing `Texture-Test.skp` model.

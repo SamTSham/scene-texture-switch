@@ -229,6 +229,8 @@ Candidates to evaluate after using 1.2 and 1.3 in real work:
 
 We should select from this list based on actual production friction rather than implement all of it automatically.
 
+The fuller evaluated backlog, including thumbnails, cue-sheet ideas, exports, and explicitly rejected detours, is recorded in `FEATURE_BACKLOG.md`.
+
 ## Version 2.0.0 — Scene State Manager
 
 Scene-controlled movement is a major expansion and deserves a major version.

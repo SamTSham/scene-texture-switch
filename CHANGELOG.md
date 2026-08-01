@@ -16,3 +16,4 @@
 - Revised version 1.1 around stable numeric scene-state folders, strict `Surface##` images, and regenerable scene-name markers.
 - Preserved and documented the installed SketchUp 2026 build as a four-project production baseline separate from canonical v1.3.
 - Added the read-only version 1.1 scanner, conflict checks, migration planner, report renderer, demo preview, and automated tests.
+- Revisited the published README and original discussion to create an evaluated feature backlog covering thumbnails, cue editing, exports, health checks, packaging, and rejected detours.
