@@ -10,7 +10,7 @@ release-candidate history remains preserved; the public release will begin at
 
 - The extension adds functionality that SketchUp does not provide natively.
 - Core use has been proven in four production set-design projects.
-- 69 automated tests cover 318 assertions with no failures.
+- 74 automated tests cover 388 assertions with no failures.
 - The extension works without an account, payment, licence server, or network.
 - The package contains an offline detailed guide, screenshots, starter images,
   and a minimal working SketchUp example.
@@ -31,10 +31,12 @@ release-candidate history remains preserved; the public release will begin at
 - An automated archive verifier rejects private paths, development versions,
   unsafe paths, missing release files, or an invalid root structure.
 
-## Required before uploading
+## Completed release testing
 
-- Run a clean installation after removing development builds.
-- Verify the packaged example and every item in the smoke-test checklist.
+- Clean installation completed after removing development builds.
+- Packaged example and core smoke-test checklist verified.
+- Existing production projects using the older surface-organised layout tested
+  successfully.
 
 ## Compatibility still to establish
 
@@ -43,11 +45,12 @@ release-candidate history remains preserved; the public release will begin at
 - The supplied example is saved in SketchUp 2013 format for broad readability.
 - Until verified, do not claim support for untested SketchUp versions.
 
-## Publication material still needed
+## Publication material
 
-- Extension icon and listing images.
+- Reusable listing and announcement copy prepared in `PUBLISHING_COPY.md`.
+- Existing guide screenshots cover material naming and the supplied example.
+- Extension icon and optional additional listing images remain desirable.
 - 90-second demonstration using the GHOST and Er Ist Wieder Da sets.
-- Public short description, full description, keywords, and release notes.
 - Public GitHub repository and issue-reporting page.
 - Extension Warehouse developer account and submission.
 - SketchUcation Plugin Author access and submission.
