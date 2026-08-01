@@ -12,3 +12,4 @@
 - Added automated tests for unsafe characters, reserved names, duplicates, and length limits.
 - Recorded the distinction between internal build v1.3 and intended public release v1.0.0.
 - Forensically reviewed three marked v1.4 experiments and documented reusable requirements and rejected code paths.
+- Added a plain-language public version roadmap from 1.0.0 through the future Scene State Manager 2.0.0.
