@@ -41,3 +41,6 @@
   numbered marker filenames in `dev.9`.
 - Preserved cue-matched working files silently during migration and added
   literal hover/large texture previews in `dev.10`.
+- Made the `z` preview shortcut close the currently open preview before opening
+  another, clarified the lowercase shortcut hint, and added relative path,
+  pixel dimensions, and file size to the large preview in `dev.11`.

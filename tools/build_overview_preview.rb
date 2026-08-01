@@ -4,7 +4,7 @@ require 'fileutils'
 require 'tmpdir'
 
 ROOT = File.expand_path('..', __dir__)
-OUTPUT = ARGV[0] || File.join(ROOT, 'builds', 'SceneTextureOverviewPreview_1.1.0-dev.10.rbz')
+OUTPUT = ARGV[0] || File.join(ROOT, 'builds', 'SceneTextureOverviewPreview_1.1.0-dev.11.rbz')
 PREVIEW_SOURCE = File.join(ROOT, 'source', 'overview_preview')
 SHARED_SOURCE = File.join(ROOT, 'source', 'extension', 'scene_texture_switcher')
 

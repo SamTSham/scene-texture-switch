@@ -56,6 +56,9 @@ module SceneTextureSwitcher
       @dialog.add_action_callback('zoomPreview') do |_action_context, path, label|
         show_large_preview(path, label)
       end
+      @dialog.add_action_callback('previewShortcut') do |_action_context, path, label|
+        toggle_large_preview(path, label)
+      end
       @dialog.set_on_closed do
         detach_pages_observer
         @dialog = nil
@@ -160,18 +163,31 @@ module SceneTextureSwitcher
       @large_preview.show
     end
 
+    def toggle_large_preview(path, label)
+      if @large_preview && @large_preview.visible?
+        @large_preview.close
+      else
+        show_large_preview(path, label)
+      end
+    end
+
     def large_preview_html(path, label)
       url = CGI.escapeHTML(PreviewAssets.file_url(path))
       title = CGI.escapeHTML(label.to_s)
+      metadata = PreviewAssets.metadata(current_library_root, path)
+      details = CGI.escapeHTML(metadata[:summary])
+      relative_path = CGI.escapeHTML(metadata[:relative_path])
       <<~HTML
         <!doctype html><html><head><meta charset="utf-8"><style>
         html,body{height:100%;margin:0;background:#181818;color:#eee;font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
-        body{display:grid;grid-template-rows:minmax(0,1fr) 28px}
+        body{display:grid;grid-template-rows:minmax(0,1fr) 42px}
         main{display:grid;place-items:center;min-height:0;padding:10px}
         img{display:block;max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 2px 18px rgba(0,0,0,.45)}
-        footer{display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:#242424;color:#bbb}
+        footer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 14px;padding:4px 10px;background:#242424;color:#bbb}
+        footer span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .path{grid-column:1;color:#ddd}.details{grid-column:1}.close{grid-column:2;grid-row:1/3;align-self:center}
         </style></head><body><main><img src="#{url}" alt="#{title}"></main>
-        <footer><span>#{title}</span><span>Z or Escape — close</span></footer>
+        <footer><span class="path" title="#{relative_path}">#{relative_path}</span><span class="details">#{details}</span><span class="close">z or Escape — close</span></footer>
         <script>document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key.toLowerCase()==='z'){e.preventDefault();window.sketchup.closePreview();}});</script>
         </body></html>
       HTML

@@ -32,7 +32,38 @@ module SceneTextureSwitcher
       URI::DEFAULT_PARSER.escape("file://#{expanded}")
     end
 
+    def metadata(root, path)
+      relative = if root
+                   path.sub(/\A#{Regexp.escape(File.expand_path(root))}#{Regexp.escape(File::SEPARATOR)}?/, '')
+                 else
+                   File.basename(path)
+                 end
+      dimensions = image_dimensions(path)
+      size = human_size(File.size(path))
+      summary = dimensions ? "#{dimensions[0]} × #{dimensions[1]} px · #{size}" : size
+      { relative_path: relative, summary: summary }
+    rescue StandardError
+      { relative_path: File.basename(path.to_s), summary: 'File information unavailable' }
+    end
+
     private
+
+    def image_dimensions(path)
+      return nil unless defined?(Sketchup::ImageRep)
+
+      image = Sketchup::ImageRep.new
+      image.load_file(path)
+      [image.width, image.height]
+    rescue StandardError
+      nil
+    end
+
+    def human_size(bytes)
+      return "#{bytes} B" if bytes < 1024
+      return format('%.1f KB', bytes / 1024.0) if bytes < 1024 * 1024
+
+      format('%.1f MB', bytes / (1024.0 * 1024.0))
+    end
 
     def surfaces(root, layout)
       case layout

@@ -341,7 +341,7 @@
   </div>
   <aside class="preview-card" id="previewCard" hidden>
     <div class="preview-grid" id="previewGrid"></div>
-    <div class="preview-hint">Z — large preview &nbsp;·&nbsp; click image</div>
+    <div class="preview-hint">z to zoom preview (or click)</div>
   </aside>
 
   <script>
@@ -520,6 +520,11 @@
         window.sketchup.zoomPreview(asset.path, `${activePreviewScene.texture_index} · ${asset.surface}`);
       }
 
+      function shortcutPreview(asset) {
+        if (!asset || !activePreviewScene || !window.sketchup || !window.sketchup.previewShortcut) return;
+        window.sketchup.previewShortcut(asset.path, `${activePreviewScene.texture_index} · ${asset.surface}`);
+      }
+
       function openPicker(scene) {
         pickerScene = scene;
         pickerTitle.textContent = `Texture for ${scene.scene_name}`;
@@ -622,7 +627,7 @@
         if (event.key === 'Escape') closePicker();
         if (event.key.toLowerCase() === 'z' && activePreviewAsset) {
           event.preventDefault();
-          zoomPreview(activePreviewAsset);
+          shortcutPreview(activePreviewAsset);
         }
       });
       previewCard.addEventListener('mouseenter', () => clearTimeout(previewTimer));
