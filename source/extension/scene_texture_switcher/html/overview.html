@@ -394,6 +394,11 @@
         return description ? `${surface} — ${description}` : surface;
       }
 
+      function surfaceShortDisplay(surface) {
+        const description = currentData && currentData.surface_labels && currentData.surface_labels[surface];
+        return description ? `${surface.replace(/^Surface/i, 'S')} - ${description}` : surface;
+      }
+
       function libraryProblem(library) {
         if (library.status === 'found') return null;
         if (library.status === 'ambiguous') return `Several texture folders found: ${library.candidates.join(', ')}`;
@@ -503,7 +508,7 @@
           tile.type = 'button';
           tile.className = 'preview-tile';
           tile.title = `${surfaceDisplay(asset.surface)} — ${asset.filename}`;
-          tile.innerHTML = `<img src="${escapeText(asset.url)}" alt="${escapeText(asset.surface)}"><span class="preview-label">${escapeText(surfaceDisplay(asset.surface))}</span>`;
+          tile.innerHTML = `<img src="${escapeText(asset.url)}" alt="${escapeText(asset.surface)}"><span class="preview-label">${escapeText(surfaceShortDisplay(asset.surface))}</span>`;
           tile.addEventListener('mouseenter', () => { activePreviewAsset = asset; });
           tile.addEventListener('focus', () => { activePreviewAsset = asset; });
           tile.addEventListener('click', () => zoomPreview(asset));
@@ -530,12 +535,12 @@
 
       function zoomPreview(asset) {
         if (!asset || !activePreviewScene || !window.sketchup || !window.sketchup.zoomPreview) return;
-        window.sketchup.zoomPreview(asset.path, `${activePreviewScene.texture_index} · ${asset.surface}`);
+        window.sketchup.zoomPreview(asset.path, `${activePreviewScene.texture_index} · ${surfaceDisplay(asset.surface)}`);
       }
 
       function shortcutPreview(asset) {
         if (!asset || !activePreviewScene || !window.sketchup || !window.sketchup.previewShortcut) return;
-        window.sketchup.previewShortcut(asset.path, `${activePreviewScene.texture_index} · ${asset.surface}`);
+        window.sketchup.previewShortcut(asset.path, `${activePreviewScene.texture_index} · ${surfaceDisplay(asset.surface)}`);
       }
 
       function openPicker(scene) {

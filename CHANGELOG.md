@@ -54,3 +54,6 @@
   commands; rewrote help from a beginner's problem, accepted any texture-folder
   suffix, added visible surface-description markers, removed public copy and
   migration machinery, and packaged the original six PNG placeholders by scene.
+- Restored the native-menu ampersand, added full project-aware preview paths,
+  and compacted described thumbnail labels to `S01 - description` in
+  `1.2.0-rc.3`.

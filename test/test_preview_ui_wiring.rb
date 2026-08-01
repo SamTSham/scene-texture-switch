@@ -14,6 +14,8 @@ class PreviewUiWiringTest < Minitest::Test
     assert_includes source, "event.key.toLowerCase() === 'z'"
     assert_includes source, 'z to zoom preview (or click)'
     assert_includes source, 'window.sketchup.previewShortcut'
+    assert_includes source, 'surfaceShortDisplay'
+    assert_includes source, "surface.replace(/^Surface/i, 'S')"
     refute_includes source, 'deduplicate'
   end
 
@@ -25,6 +27,8 @@ class PreviewUiWiringTest < Minitest::Test
     assert_includes source, "add_action_callback('previewShortcut')"
     assert_includes source, 'z or Escape — close'
     assert_includes source, 'PreviewAssets.metadata(current_library_root, path)'
+    assert_includes source, 'preview_path_parts(metadata[:full_path])'
+    assert_includes source, 'path-prefix'
   end
 
   def test_package_includes_preview_asset_service

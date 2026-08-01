@@ -18,7 +18,7 @@ module SceneTextureSwitcher
   module OverviewPreview
     extend self
 
-    VERSION = '1.2.0-rc.2'
+    VERSION = '1.2.0-rc.3'
 
     def activate
       if @dialog && @dialog.visible?
@@ -226,7 +226,10 @@ module SceneTextureSwitcher
       title = CGI.escapeHTML(label.to_s)
       metadata = PreviewAssets.metadata(current_library_root, path)
       details = CGI.escapeHTML(metadata[:summary])
-      relative_path = CGI.escapeHTML(metadata[:relative_path])
+      path_parts = preview_path_parts(metadata[:full_path])
+      path_prefix = CGI.escapeHTML(path_parts[:prefix])
+      project_path = CGI.escapeHTML(path_parts[:project])
+      full_path = CGI.escapeHTML(metadata[:full_path])
       <<~HTML
         <!doctype html><html><head><meta charset="utf-8"><style>
         html,body{height:100%;margin:0;background:#181818;color:#eee;font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
@@ -235,12 +238,23 @@ module SceneTextureSwitcher
         img{display:block;max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 2px 18px rgba(0,0,0,.45)}
         footer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 14px;padding:4px 10px;background:#242424;color:#bbb}
         footer span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .path{grid-column:1;color:#ddd}.details{grid-column:1}.close{grid-column:2;grid-row:1/3;align-self:center}
+        .path{grid-column:1;color:#ddd}.path-prefix{color:#777}.details{grid-column:1}.close{grid-column:2;grid-row:1/3;align-self:center}
         </style></head><body><main><img src="#{url}" alt="#{title}"></main>
-        <footer><span class="path" title="#{relative_path}">#{relative_path}</span><span class="details">#{details}</span><span class="close">z or Escape — close</span></footer>
+        <footer><span class="path" title="#{full_path}"><span class="path-prefix">#{path_prefix}</span>#{project_path}</span><span class="details">#{details}</span><span class="close">z or Escape — close</span></footer>
         <script>document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key.toLowerCase()==='z'){e.preventDefault();window.sketchup.closePreview();}});</script>
         </body></html>
       HTML
+    end
+
+    def preview_path_parts(full_path)
+      model_path = Sketchup.active_model.path.to_s
+      return { prefix: '', project: full_path.to_s } if model_path.empty?
+
+      project_dir = File.dirname(File.expand_path(model_path))
+      parent = File.dirname(project_dir)
+      prefix = parent.end_with?(File::SEPARATOR) ? parent : "#{parent}#{File::SEPARATOR}"
+      project = full_path.to_s.sub(/\A#{Regexp.escape(prefix)}/, '')
+      { prefix: prefix, project: project }
     end
 
     def current_library_root
@@ -348,7 +362,7 @@ module SceneTextureSwitcher
   unless file_loaded?(__FILE__)
     menu = UI.menu('Extensions').add_submenu('Scene TextureSwitch')
     menu.add_item('Open Scene TextureSwitch') { OverviewPreview.activate }
-    menu.add_item('Settings & Quick Guide…') { OverviewPreview.activate_settings }
+    menu.add_item('Settings && Quick Guide…') { OverviewPreview.activate_settings }
     OverviewPreview.start_scene_polling
     file_loaded(__FILE__)
   end

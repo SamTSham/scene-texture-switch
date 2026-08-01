@@ -45,9 +45,9 @@ module SceneTextureSwitcher
       dimensions = image_dimensions(path)
       size = human_size(File.size(path))
       summary = dimensions ? "#{dimensions[0]} × #{dimensions[1]} px · #{size}" : size
-      { relative_path: relative, summary: summary }
+      { relative_path: relative, full_path: File.expand_path(path), summary: summary }
     rescue StandardError
-      { relative_path: File.basename(path.to_s), summary: 'File information unavailable' }
+      { relative_path: File.basename(path.to_s), full_path: File.expand_path(path.to_s), summary: 'File information unavailable' }
     end
 
     def image_dimensions(path)
