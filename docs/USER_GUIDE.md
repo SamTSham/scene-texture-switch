@@ -38,7 +38,7 @@ orientation.
 ## Three-minute setup
 
 **Fastest test:** In **Settings + Quick Guide**, click **Show supplied starter
-folder**. Open `Texture-Test.skp` beside its supplied `textures - Starter`
+folder**. Open `Texture_Test.skp` beside its supplied `textures - Starter`
 folder, then change between its three scenes. The pictures should switch
 immediately.
 

@@ -1,6 +1,6 @@
 # Regression checklist
 
-Run against the known `Texture-Test.skp` model and a copy of its texture tree.
+Run against the known `Texture_Test.skp` model and a copy of its texture tree.
 
 ## Installation
 
@@ -37,4 +37,3 @@ Run against the known `Texture-Test.skp` model and a copy of its texture tree.
 - [ ] Dialog reopening does not duplicate callbacks or menu commands.
 - [ ] Closing or breaking the overview does not stop scene switching.
 - [ ] Normal and enlarged display scaling remain usable.
-

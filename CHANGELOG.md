@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0-rc.11
+
+- Replaced the SketchUp 2026 example model with a SketchUp 2013-format copy so
+  users of earlier desktop versions can open the quickest-test project.
+- Standardised the example filename as `Texture_Test.skp`.
+
 ## 1.2.0-rc.10
 
 - Replaced inaccurate transparency/opacity starter labels with the scenic-use

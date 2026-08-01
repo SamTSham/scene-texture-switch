@@ -1,6 +1,6 @@
 # Scene TextureSwitch publication audit
 
-Audit basis: internal release candidate `1.2.0-rc.10`, 1 August 2026.
+Audit basis: internal release candidate `1.2.0-rc.11`, 1 August 2026.
 
 This document is the release gate for the first public version. Internal
 release-candidate history remains preserved; the public release will begin at
@@ -25,7 +25,7 @@ release-candidate history remains preserved; the public release will begin at
 - Remove the retired preview-extension shim from the public package.
 - Replace development-facing folder and module names where appropriate.
 - Confirm the final author name, copyright notice, support route, and licence.
-- Change public metadata from `1.2.0-rc.10` to `1.0.0`.
+- Change public metadata from `1.2.0-rc.11` to `1.0.0`.
 - Run a clean installation after removing development builds.
 - Verify the packaged example and every item in the smoke-test checklist.
 
@@ -33,7 +33,7 @@ release-candidate history remains preserved; the public release will begin at
 
 - Confirmed manually: SketchUp 2026 on macOS.
 - Desired before broad compatibility claims: one Windows test.
-- Optional: save and test the example model in an earlier SketchUp format.
+- The supplied example is saved in SketchUp 2013 format for broad readability.
 - Until verified, do not claim support for untested SketchUp versions.
 
 ## Publication material still needed
