@@ -33,3 +33,22 @@ Next:
 4. Display/save the preview without altering the library.
 5. Package as `1.1.0-dev.1` for testing alongside—not over—the production baseline.
 
+## dev.1 overview companion
+
+Completed:
+
+- added a read-only scene snapshot using SketchUp page persistent IDs where
+  available;
+- discovers `Textures` and project-labelled dash variants beside the model;
+- treats several compatible libraries as a conflict rather than guessing;
+- reports ready, incomplete, missing, and duplicate-extension conflict states;
+- fixes the former zero-surfaces-equals-ready error;
+- renders all scenes in a compact, resizable, scrollable palette;
+- keeps row selection separate from SketchUp scene activation;
+- marks the actual current scene without navigating to it;
+- packaged as a standalone companion extension with no timer, texture
+  application, or model-writing callback.
+
+The companion package is deliberately separate from the production extension.
+It can be installed alongside the working switcher for interface testing, then
+removed without replacing production files.

@@ -18,3 +18,6 @@
 - Added the read-only version 1.1 scanner, conflict checks, migration planner, report renderer, demo preview, and automated tests.
 - Revisited the published README and original discussion to create an evaluated feature backlog covering thumbnails, cue editing, exports, health checks, packaging, and rejected detours.
 - Made visual mockups and rendered interface previews a standing project rule in place of ASCII wireframes.
+- Added the isolated read-only scene overview companion, stable page snapshot,
+  compatible library discovery, corrected readiness checks, and exact rendered
+  interface preview for `1.1.0-dev.1`.

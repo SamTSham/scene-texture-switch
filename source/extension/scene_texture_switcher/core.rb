@@ -1,3 +1,7 @@
+require 'json'
+require File.join(__dir__, 'texture_library_status')
+require File.join(__dir__, 'scene_snapshot')
+
 module SceneTextureSwitcher
   module Core
     extend self
@@ -29,6 +33,46 @@ module SceneTextureSwitcher
       end
 
       dlg.show
+    end
+
+    # Opens a read-only overview beside the established selector. The overview
+    # receives snapshots only and cannot apply textures or alter scene data.
+    def activate_overview
+      if @overview_dialog && @overview_dialog.visible?
+        @overview_dialog.bring_to_front
+        refresh_overview(@overview_dialog)
+        return
+      end
+
+      @overview_dialog = UI::HtmlDialog.new({
+        :dialog_title => 'Scene Texture Overview — Preview',
+        :preferences_key => 'SceneTextureSwitcherOverview',
+        :scrollable => false,
+        :resizable => true,
+        :width => 430,
+        :height => 520,
+        :min_width => 330,
+        :min_height => 240,
+        :style => UI::HtmlDialog::STYLE_DIALOG
+      })
+      @overview_dialog.set_file(File.join(__dir__, 'html', 'overview.html'))
+      @overview_dialog.add_action_callback('requestSnapshot') do |dialog, _payload|
+        refresh_overview(dialog)
+      end
+      @overview_dialog.set_on_closed { @overview_dialog = nil }
+      @overview_dialog.show
+    end
+
+    def refresh_overview(dialog = @overview_dialog)
+      return unless dialog
+
+      model = Sketchup.active_model
+      project_dir = model.path.to_s.empty? ? nil : File.dirname(model.path)
+      discovery = TextureLibraryStatus.discover(project_dir)
+      snapshot = SceneSnapshot.build(model, discovery)
+      dialog.execute_script("SceneTextureOverview.render(#{JSON.generate(snapshot)})")
+    rescue StandardError => error
+      puts "[SceneTextureSwitcher] Overview refresh failed: #{error.class}: #{error.message}"
     end
 
     def apply_all_textures(cue)
@@ -89,6 +133,9 @@ module SceneTextureSwitcher
   unless file_loaded?(__FILE__)
     UI.menu('Extensions').add_item('Scene Texture Switcher') {
       Core.activate
+    }
+    UI.menu('Extensions').add_item('Scene Texture Overview — Preview') {
+      Core.activate_overview
     }
     Core.start_scene_polling
     file_loaded(__FILE__)

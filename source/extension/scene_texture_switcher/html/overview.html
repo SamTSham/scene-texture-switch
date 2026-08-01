@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scene Texture Overview</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f4f3;
+      --panel: #ffffff;
+      --text: #171717;
+      --muted: #707070;
+      --line: #d8d8d6;
+      --hover: #eeeeec;
+      --selected: #e5eef9;
+      --current: #2c76c7;
+      --ready: #171717;
+      --incomplete: #e03b32;
+      --missing: #bcbcbc;
+      --conflict: #d38a16;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #282828;
+        --panel: #323232;
+        --text: #f0f0f0;
+        --muted: #aeaeae;
+        --line: #4a4a4a;
+        --hover: #3a3a3a;
+        --selected: #35485d;
+        --ready: #eeeeee;
+        --missing: #777777;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font: 13px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .app {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 42px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    button {
+      border: 0;
+      border-radius: 5px;
+      padding: 5px 8px;
+      color: inherit;
+      background: transparent;
+      font: inherit;
+    }
+
+    button:hover { background: var(--hover); }
+
+    .library {
+      min-height: 30px;
+      padding: 6px 12px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rows { overflow: auto; }
+
+    .empty {
+      padding: 24px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 16px minmax(0, 1fr) 54px 42px;
+      gap: 7px;
+      align-items: center;
+      min-height: 39px;
+      padding: 5px 10px 5px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      cursor: default;
+      user-select: none;
+    }
+
+    .row:hover { background: var(--hover); }
+    .row.selected { background: var(--selected); }
+    .row.current::before {
+      position: absolute;
+      inset: 5px auto 5px 0;
+      width: 3px;
+      border-radius: 0 2px 2px 0;
+      background: var(--current);
+      content: "";
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--missing);
+    }
+
+    .dot.ready { background: var(--ready); }
+    .dot.incomplete { background: var(--incomplete); }
+    .dot.missing { background: var(--missing); }
+    .dot.conflict {
+      border-radius: 2px;
+      background: var(--conflict);
+      transform: rotate(45deg) scale(.82);
+    }
+
+    .scene { min-width: 0; }
+    .scene-name {
+      overflow: hidden;
+      font-size: 13px;
+      font-weight: 560;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .scene-detail {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cue {
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 3px 6px;
+      background: var(--bg);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .count {
+      color: var(--muted);
+      text-align: right;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 34px;
+      padding: 6px 10px 6px 12px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .read-only {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 1px 6px;
+      font-size: 10px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Scene Textures</h1>
+      <button type="button" id="refresh" title="Refresh overview" aria-label="Refresh overview">&#x21bb;</button>
+    </header>
+    <div class="library" id="library">Reading texture library…</div>
+    <main class="rows" id="rows"></main>
+    <footer>
+      <span id="summary">Reading scenes…</span>
+      <span class="read-only">Preview</span>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const rowsElement = document.getElementById('rows');
+      const libraryElement = document.getElementById('library');
+      const summaryElement = document.getElementById('summary');
+      let selectedKey = null;
+
+      const labels = {
+        ready: 'ready',
+        incomplete: 'incomplete',
+        missing: 'missing',
+        conflict: 'conflict'
+      };
+
+      function escapeText(value) {
+        const span = document.createElement('span');
+        span.textContent = value == null ? '' : String(value);
+        return span.innerHTML;
+      }
+
+      function detailFor(scene) {
+        if (scene.status === 'ready') return 'All required textures present';
+        if (scene.status === 'incomplete') return `Missing: ${scene.missing_surfaces.join(', ')}`;
+        if (scene.status === 'conflict') return 'Texture library needs attention';
+        return scene.required_count ? 'No textures prepared' : 'Surface folders unavailable';
+      }
+
+      function libraryText(library) {
+        if (library.status === 'found') return library.name;
+        if (library.status === 'ambiguous') return `Several texture folders found: ${library.candidates.join(', ')}`;
+        if (library.status === 'error') return library.message || 'Texture folder could not be read';
+        return 'No compatible texture folder found beside this model';
+      }
+
+      function render(data) {
+        libraryElement.textContent = libraryText(data.library);
+        rowsElement.innerHTML = '';
+
+        if (!data.scenes.length) {
+          rowsElement.innerHTML = '<div class="empty">This model has no scenes.</div>';
+        } else {
+          data.scenes.forEach((scene) => {
+            const row = document.createElement('div');
+            row.className = `row${scene.current ? ' current' : ''}${selectedKey === scene.scene_key ? ' selected' : ''}`;
+            row.dataset.sceneKey = scene.scene_key;
+            row.title = `${scene.scene_name} — ${labels[scene.status] || scene.status}`;
+            row.innerHTML = `
+              <span class="dot ${escapeText(scene.status)}" aria-label="${escapeText(labels[scene.status] || scene.status)}"></span>
+              <span class="scene">
+                <span class="scene-name">${escapeText(scene.scene_name)}</span>
+                <span class="scene-detail">${escapeText(detailFor(scene))}</span>
+              </span>
+              <span class="cue">${escapeText(scene.texture_index)}</span>
+              <span class="count">${scene.present_count}/${scene.required_count}</span>`;
+            row.addEventListener('click', () => {
+              selectedKey = scene.scene_key;
+              rowsElement.querySelectorAll('.row').forEach((item) => item.classList.toggle('selected', item === row));
+            });
+            rowsElement.appendChild(row);
+          });
+        }
+
+        const attention = data.summary.attention;
+        summaryElement.textContent = attention === 0
+          ? `${data.summary.scene_count} scenes ready`
+          : `${attention} ${attention === 1 ? 'scene needs' : 'scenes need'} attention`;
+      }
+
+      function previewData() {
+        const names = [
+          '01 Opening', '02 Hotel', '03 Finale', '04 Curtain Transition',
+          '05 Kitchen / Evening', '06 Empty Stage', '07 Interval',
+          '08 Very Long Scene Name for a Scenic Transition Test',
+          '09 Return', '10 Finale Reset', '11 Shared Texture State',
+          '12 Missing Projection Content'
+        ];
+        const states = ['ready', 'ready', 'incomplete', 'ready', 'conflict', 'missing'];
+        const scenes = names.map((name, index) => {
+          const status = states[index % states.length];
+          const present = status === 'ready' ? 3 : status === 'missing' ? 0 : 2;
+          return {
+            scene_key: `preview-${index}`,
+            scene_name: name,
+            texture_index: String((index % 8) + 1).padStart(2, '0'),
+            status,
+            present_count: present,
+            required_count: 3,
+            missing_surfaces: present === 3 ? [] : ['Surface03'],
+            conflicts: [],
+            current: index === 2
+          };
+        });
+        const counts = (status) => scenes.filter((scene) => scene.status === status).length;
+        return {
+          library: { status: 'found', name: 'Textures — Preview Project', candidates: [] },
+          scenes,
+          summary: {
+            scene_count: scenes.length,
+            ready: counts('ready'),
+            incomplete: counts('incomplete'),
+            missing: counts('missing'),
+            conflict: counts('conflict'),
+            attention: scenes.filter((scene) => scene.status !== 'ready').length
+          }
+        };
+      }
+
+      window.SceneTextureOverview = { render };
+      document.getElementById('refresh').addEventListener('click', () => {
+        if (window.sketchup) window.sketchup.requestSnapshot();
+      });
+      window.addEventListener('load', () => {
+        if (window.sketchup) {
+          window.sketchup.requestSnapshot();
+        } else if (new URLSearchParams(window.location.search).has('preview')) {
+          render(previewData());
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
