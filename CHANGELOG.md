@@ -37,3 +37,5 @@
 - Added verified scene-first copying, marker generation, explicit model-library
   association, dual-layout readiness, and reversible scene-first switching in
   `dev.8`.
+- Added continuous create-before-remove scene marker synchronisation and
+  numbered marker filenames in `dev.9`.

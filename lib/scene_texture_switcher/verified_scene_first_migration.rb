@@ -85,7 +85,7 @@ module SceneTextureSwitcher
         cue_scenes.zip(names).map do |scene, safe_name|
           folder = File.join(destination, cue)
           FileUtils.mkdir_p(folder)
-          path = File.join(folder, "#{safe_name}.txt")
+          path = File.join(folder, "#{cue}_#{safe_name}.txt")
           File.open(path, 'wb') do |file|
             file.write("Scene Texture Switcher label\n")
             file.write("Scene: #{scene[:name]}\n")

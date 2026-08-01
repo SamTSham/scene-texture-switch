@@ -151,3 +151,20 @@ If adoption is declined after copying, a separate **Adopt Existing Scene-First
 Texture Copy…** command permits later adoption. It accepts exactly one
 scene-first candidate carrying the generated verification report, so inspection
 does not force an immediate decision or require another migration.
+
+### dev.9 continuous numbered scene markers
+
+Marker names now include their texture-state number, for example
+`04_strangely long name.txt`. Opening the palette repairs earlier `dev.8`
+markers to the new convention.
+
+The synchronizer runs after assignment and debounced scene-list edits. It:
+
+- creates the desired marker before removing an obsolete one;
+- moves a marker when its scene is reassigned;
+- renames it when the scene name changes;
+- removes managed markers for deleted scenes;
+- creates a missing numeric folder when a scene is assigned to it;
+- removes a vacated numeric folder only when it is completely empty;
+- identifies managed markers by their exact header and persistent scene key;
+- never edits texture images or unrelated text files.

@@ -33,8 +33,8 @@ class VerifiedSceneFirstMigrationTest < Minitest::Test
       assert_equal source_before, snapshot_files(source)
       assert_equal 'png-one', File.read(File.join(destination, '01', 'Surface01.png'))
       assert_equal 'jpg-two', File.read(File.join(destination, '01', 'Surface02.jpg'))
-      assert File.file?(File.join(destination, '01', 'Opening - House.txt'))
-      assert File.file?(File.join(destination, '01', 'Opening - House.2.txt'))
+      assert File.file?(File.join(destination, '01', '01_Opening - House.txt'))
+      assert File.file?(File.join(destination, '01', '01_Opening - House.2.txt'))
       assert File.file?(File.join(destination, Migration::REPORT_NAME))
       assert_equal 2, result[:copied].length
       assert result[:copied].all? { |record| record[:sha256].length == 64 }

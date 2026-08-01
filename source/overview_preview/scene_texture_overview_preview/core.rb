@@ -9,13 +9,13 @@ require File.join(__dir__, 'library_association')
 require File.join(__dir__, 'texture_applier')
 require File.join(__dir__, 'scene_first_bridge')
 require File.join(__dir__, 'scene_marker_name')
+require File.join(__dir__, 'scene_marker_sync')
 require File.join(__dir__, 'legacy_library_scanner')
 require File.join(__dir__, 'migration_planner')
 require File.join(__dir__, 'verified_scene_first_migration')
 
 module SceneTextureSwitcher
-  # Standalone read-only test companion. It does not start a timer, apply a
-  # texture, or write model attributes.
+  # Standalone development companion for the guarded migration and editor.
   module OverviewPreview
     extend self
 
@@ -57,6 +57,7 @@ module SceneTextureSwitcher
       end
       @dialog.show
       attach_pages_observer
+      sync_scene_markers
     end
 
     def refresh(dialog = @dialog)
@@ -80,6 +81,7 @@ module SceneTextureSwitcher
       end
 
       apply_current_texture(result[:cue]) if result[:current]
+      sync_scene_markers
       refresh(@dialog)
     end
 
@@ -107,6 +109,7 @@ module SceneTextureSwitcher
         cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
         apply_current_texture(TextureLibraryStatus.normalize_cue(cue))
       end
+      sync_scene_markers
       refresh(@dialog)
     end
 
@@ -236,12 +239,29 @@ module SceneTextureSwitcher
       end
     end
 
+    def sync_scene_markers
+      model = Sketchup.active_model
+      return if model.path.to_s.empty?
+
+      preferred = LibraryAssociation.folder_name(model)
+      return unless preferred
+
+      discovery = TextureLibraryStatus.discover(File.dirname(model.path), preferred)
+      root = discovery[:root]
+      return unless root && TextureLibraryStatus.layout(root) == :scene_first
+
+      SceneMarkerSync.sync(root, scene_records(model))
+    rescue StandardError => error
+      puts "[SceneTextureOverview] Scene label sync failed: #{error.class}: #{error.message}"
+    end
+
     def schedule_refresh
       return if @refresh_scheduled
 
       @refresh_scheduled = true
       UI.start_timer(0.1, false) do
         @refresh_scheduled = false
+        sync_scene_markers
         refresh(@dialog) if @dialog
       end
     end
