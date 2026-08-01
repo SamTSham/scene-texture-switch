@@ -49,5 +49,7 @@ class UnifiedReleaseWiringTest < Minitest::Test
     assert_includes source, "File.join(ROOT, 'assets', 'guide')"
     assert_includes source, "File.join(ROOT, 'assets', 'example')"
     assert_includes source, 'Texture-Test.skp'
+    refute_includes source, '/Users/'
+    refute_includes source, 'STS_STARTER_SOURCE'
   end
 end

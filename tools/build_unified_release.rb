@@ -8,10 +8,6 @@ VERSION = '1.2.0-rc.10'
 OUTPUT = ARGV[0] || File.join(ROOT, 'builds', "SceneTextureSwitch_#{VERSION}.rbz")
 PREVIEW_SOURCE = File.join(ROOT, 'source', 'overview_preview')
 SHARED_SOURCE = File.join(ROOT, 'source', 'extension', 'scene_texture_switcher')
-STARTER_SOURCE = ENV.fetch(
-  'STS_STARTER_SOURCE',
-  '/Users/sammadwar/_PROJEKTE/SceneTextureSwitcher/scene_texture_switcher/textures'
-)
 
 Dir.mktmpdir('scene-textures-release') do |stage|
   folder = File.join(stage, 'scene_texture_overview_preview')
@@ -46,7 +42,7 @@ Dir.mktmpdir('scene-textures-release') do |stage|
       cue_folder
     )
     %w[Surface01 Surface02].each do |surface|
-      source = File.join(STARTER_SOURCE, surface, "#{cue}.png")
+      source = File.join(ROOT, 'assets', 'starter', cue, "#{surface}.png")
       abort "Starter picture is missing: #{source}" unless File.file?(source)
 
       FileUtils.cp(source, File.join(cue_folder, "#{surface}.png"))
