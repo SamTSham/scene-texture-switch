@@ -30,3 +30,5 @@
   the current scene.
 - Compressed the verified palette in `dev.5`, removing redundant chrome and
   reducing row height while retaining selected-row details in the footer.
+- Replaced the generic texture-folder label in `dev.6` with a compact colour
+  legend and contextual hover guidance.

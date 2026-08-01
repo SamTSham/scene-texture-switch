@@ -77,9 +77,23 @@
     }
 
     .library-name {
+      display: flex;
+      gap: 7px;
+      align-items: center;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+
+    .legend-item .dot {
+      width: 7px;
+      height: 7px;
     }
 
     .refresh {
@@ -306,16 +320,33 @@
         return scene.required_count ? 'No textures prepared' : 'Surface folders unavailable';
       }
 
-      function libraryText(library) {
-        if (library.status === 'found') return library.name;
+      function libraryProblem(library) {
+        if (library.status === 'found') return null;
         if (library.status === 'ambiguous') return `Several texture folders found: ${library.candidates.join(', ')}`;
         if (library.status === 'error') return library.message || 'Texture folder could not be read';
         return 'No compatible texture folder found beside this model';
       }
 
+      function defaultGuide(library) {
+        const problem = libraryProblem(library);
+        if (problem) {
+          libraryElement.textContent = problem;
+          return;
+        }
+        libraryElement.innerHTML = `
+          <span class="legend-item"><span class="dot ready"></span>ready</span>
+          <span class="legend-item"><span class="dot incomplete"></span>incomplete</span>
+          <span class="legend-item"><span class="dot missing"></span>missing</span>
+          <span class="legend-item"><span class="dot conflict"></span>conflict</span>`;
+      }
+
+      function temporaryGuide(text) {
+        libraryElement.textContent = text;
+      }
+
       function render(data) {
         currentData = data;
-        libraryElement.textContent = libraryText(data.library);
+        defaultGuide(data.library);
         rowsElement.innerHTML = '';
 
         if (!data.scenes.length) {
@@ -339,9 +370,15 @@
               rowsElement.querySelectorAll('.row').forEach((item) => item.classList.toggle('selected', item === row));
               summaryElement.textContent = `${scene.scene_name}: ${detailFor(scene)}`;
             });
+            row.addEventListener('mouseenter', () => temporaryGuide(`${labels[scene.status] || scene.status}: ${detailFor(scene)}`));
+            row.addEventListener('mouseleave', () => defaultGuide(currentData.library));
             row.querySelector('.cue').addEventListener('click', (event) => {
               event.stopPropagation();
               openPicker(scene);
+            });
+            row.querySelector('.cue').addEventListener('mouseenter', (event) => {
+              event.stopPropagation();
+              temporaryGuide(`Click to assign a texture state to ${scene.scene_name}`);
             });
             rowsElement.appendChild(row);
           });
@@ -433,6 +470,10 @@
 
       window.SceneTextureOverview = { render };
       document.getElementById('pickerClose').addEventListener('click', closePicker);
+      document.getElementById('refresh').addEventListener('mouseenter', () => temporaryGuide('Rescan scenes, assignments, and texture files'));
+      document.getElementById('refresh').addEventListener('mouseleave', () => {
+        if (currentData) defaultGuide(currentData.library);
+      });
       pickerBackdrop.addEventListener('click', (event) => {
         if (event.target === pickerBackdrop) closePicker();
       });

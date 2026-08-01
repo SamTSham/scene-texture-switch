@@ -103,3 +103,11 @@ The successful combined palette is compressed for SketchUp screen economy:
 
 The rescan button remains because external Finder and Photoshop file changes do
 not reliably generate SketchUp scene events.
+
+### dev.6 contextual legend strip
+
+The compact strip no longer spends permanent space displaying the generic
+folder name `textures`. It normally shows the four status colours. Hovering a
+scene row, texture-number control, or rescan button temporarily replaces the
+legend with a concise explanation. Missing or ambiguous library warnings take
+priority over the ordinary legend.
