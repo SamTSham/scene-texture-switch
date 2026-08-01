@@ -20,7 +20,7 @@ Dir.mktmpdir('scene-textures-release') do |stage|
   FileUtils.cp(File.join(PREVIEW_SOURCE, 'scene_texture_overview_preview', 'html', 'settings.html'), File.join(folder, 'html'))
 
   %w[
-    texture_library_status.rb scene_snapshot.rb overview_pages_observer.rb
+    namespace.rb texture_library_status.rb scene_snapshot.rb overview_pages_observer.rb
     scene_assignment.rb library_association.rb texture_applier.rb
     scene_marker_name.rb scene_marker_sync.rb
     preview_assets.rb surface_labels.rb

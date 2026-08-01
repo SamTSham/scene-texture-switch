@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-module SceneTextureSwitcher
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+
+module SamMadwar::SceneTextureSwitch
   # Read-only discovery and readiness checks for the established texture
   # library. This module never creates, renames, or removes files.
   module TextureLibraryStatus

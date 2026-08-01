@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-module SceneTextureSwitcher
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+
+module SamMadwar::SceneTextureSwitch
   # Writes only the established per-page texture_index attribute. Texture files
   # and scene activation are outside this module.
   module SceneAssignment

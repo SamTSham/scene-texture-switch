@@ -8,7 +8,7 @@ require_relative '../source/extension/scene_texture_switcher/scene_marker_name'
 require_relative '../source/extension/scene_texture_switcher/scene_marker_sync'
 
 class SceneMarkerSyncTest < Minitest::Test
-  Sync = SceneTextureSwitcher::SceneMarkerSync
+  Sync = SamMadwar::SceneTextureSwitch::SceneMarkerSync
 
   def test_repairs_old_marker_and_moves_it_after_reassignment
     Dir.mktmpdir do |root|

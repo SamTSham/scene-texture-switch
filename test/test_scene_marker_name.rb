@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require_relative '../source/extension/scene_texture_switcher/scene_marker_name'
 
 class SceneMarkerNameTest < Minitest::Test
-  Naming = SceneTextureSwitcher::SceneMarkerName
+  Naming = SamMadwar::SceneTextureSwitch::SceneMarkerName
 
   def test_plain_name_is_unchanged
     assert_equal 'Opening', Naming.sanitize('Opening')

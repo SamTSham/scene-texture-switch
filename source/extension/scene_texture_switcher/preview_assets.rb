@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+
 require 'uri'
 
-module SceneTextureSwitcher
+module SamMadwar::SceneTextureSwitch
   module PreviewAssets
     extend self
 

@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require_relative '../source/extension/scene_texture_switcher/library_association'
 
 class LibraryAssociationTest < Minitest::Test
-  Association = SceneTextureSwitcher::LibraryAssociation
+  Association = SamMadwar::SceneTextureSwitch::LibraryAssociation
 
   class FakeModel
     def initialize

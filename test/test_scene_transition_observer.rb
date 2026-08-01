@@ -20,7 +20,7 @@ class SceneTransitionObserverTest < Minitest::Test
 
   def setup
     @owner = Owner.new
-    @observer = SceneTextureSwitcher::SceneTransitionObserver.new(@owner)
+    @observer = SamMadwar::SceneTextureSwitch::SceneTransitionObserver.new(@owner)
   end
 
   def test_notifies_at_first_frame_only_during_a_long_transition

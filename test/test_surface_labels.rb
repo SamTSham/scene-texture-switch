@@ -6,7 +6,7 @@ require_relative '../source/extension/scene_texture_switcher/texture_library_sta
 require_relative '../source/extension/scene_texture_switcher/surface_labels'
 
 class SurfaceLabelsTest < Minitest::Test
-  Labels = SceneTextureSwitcher::SurfaceLabels
+  Labels = SamMadwar::SceneTextureSwitch::SurfaceLabels
 
   def test_round_trip_keeps_only_surface_descriptions
     Dir.mktmpdir do |root|

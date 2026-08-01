@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-module SceneTextureSwitcher
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+
+module SamMadwar::SceneTextureSwitch
   # Reports scene-list edits while the overview is open. The receiving owner
   # decides when and how to refresh its snapshot.
   class OverviewPagesObserver < Sketchup::PagesObserver

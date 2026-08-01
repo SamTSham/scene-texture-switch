@@ -12,7 +12,7 @@ class VerifiedSceneFirstMigrationTest < Minitest::Test
   Scanner = SceneTextureSwitcher::LegacyLibraryScanner
   Planner = SceneTextureSwitcher::MigrationPlanner
   Migration = SceneTextureSwitcher::VerifiedSceneFirstMigration
-  MarkerNamer = SceneTextureSwitcher::SceneMarkerName
+  MarkerNamer = SamMadwar::SceneTextureSwitch::SceneMarkerName
 
   def test_copies_verifies_and_labels_without_changing_source
     Dir.mktmpdir do |root|

@@ -6,7 +6,7 @@ require 'fileutils'
 require_relative '../source/extension/scene_texture_switcher/texture_library_status'
 
 class TextureLibraryStatusTest < Minitest::Test
-  Status = SceneTextureSwitcher::TextureLibraryStatus
+  Status = SamMadwar::SceneTextureSwitch::TextureLibraryStatus
 
   def test_texture_folder_suffix_is_only_a_human_label
     %w[textures texturesAnything].each { |name| assert_match Status::LIBRARY_NAME, name }

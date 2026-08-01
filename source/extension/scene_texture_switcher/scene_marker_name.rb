@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-module SceneTextureSwitcher
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+
+module SamMadwar::SceneTextureSwitch
   # Pure folder-name rules. This module does not touch SketchUp or the filesystem,
   # so it can be tested without loading the plugin.
   module SceneMarkerName

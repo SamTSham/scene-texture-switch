@@ -18,14 +18,21 @@ release-candidate history remains preserved; the public release will begin at
 - The release can now be rebuilt using only files stored in this repository.
 - All external working files such as PSD, TIFF, and PDF are ignored safely.
 
-## Required before public 1.0.0
+## Public 1.0.0 package completed
 
-- Build an Extension Warehouse-compliant RBZ containing exactly one root Ruby
-  loader and one identically named extension folder.
-- Remove the retired preview-extension shim from the public package.
-- Replace development-facing folder and module names where appropriate.
-- Confirm the final author name, copyright notice, support route, and licence.
-- Change public metadata from `1.2.0-rc.11` to `1.0.0`.
+- The public RBZ contains exactly one root loader,
+  `sam_madwar_scene_texture_switch.rb`, and one matching support folder.
+- The retired preview-extension shim is absent from the public package.
+- Runtime Ruby code is wrapped in `SamMadwar::SceneTextureSwitch`.
+- Public identity is Sam Madwar, copyright 2026, with support through GitHub
+  Issues.
+- The project and packaged extension carry the MIT Licence.
+- Public metadata and release notes identify version `1.0.0`.
+- An automated archive verifier rejects private paths, development versions,
+  unsafe paths, missing release files, or an invalid root structure.
+
+## Required before uploading
+
 - Run a clean installation after removing development builds.
 - Verify the packaged example and every item in the smoke-test checklist.
 

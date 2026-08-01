@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+
 require 'json'
 require 'cgi'
 require File.join(__dir__, 'texture_library_status')
@@ -14,12 +16,12 @@ require File.join(__dir__, 'preview_assets')
 require File.join(__dir__, 'surface_labels')
 require File.join(__dir__, 'scene_transition_observer')
 
-module SceneTextureSwitcher
+module SamMadwar::SceneTextureSwitch
   # Unified offline controller for switching, assignment, organisation, and help.
   module OverviewPreview
     extend self
 
-    VERSION = '1.2.0-rc.11'
+    VERSION = defined?(EXTENSION) ? EXTENSION.version : '1.0.0'
 
     def activate
       if @dialog && @dialog.visible?

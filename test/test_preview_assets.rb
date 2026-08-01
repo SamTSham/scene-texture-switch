@@ -8,7 +8,7 @@ require_relative '../source/extension/scene_texture_switcher/texture_applier'
 require_relative '../source/extension/scene_texture_switcher/preview_assets'
 
 class PreviewAssetsTest < Minitest::Test
-  Assets = SceneTextureSwitcher::PreviewAssets
+  Assets = SamMadwar::SceneTextureSwitch::PreviewAssets
 
   def test_lists_literal_switchable_files_and_ignores_working_files
     Dir.mktmpdir('preview assets ') do |root|

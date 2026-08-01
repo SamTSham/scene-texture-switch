@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-module SceneTextureSwitcher
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+
+module SamMadwar::SceneTextureSwitch
   module TextureApplier
     extend self
 

@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-require File.join(__dir__, 'texture_library_status') unless defined?(SceneTextureSwitcher::TextureLibraryStatus)
-require File.join(__dir__, 'texture_applier') unless defined?(SceneTextureSwitcher::TextureApplier)
-require File.join(__dir__, 'preview_assets') unless defined?(SceneTextureSwitcher::PreviewAssets)
-require File.join(__dir__, 'surface_labels') unless defined?(SceneTextureSwitcher::SurfaceLabels)
+require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
 
-module SceneTextureSwitcher
+require File.join(__dir__, 'texture_library_status') unless defined?(SamMadwar::SceneTextureSwitch::TextureLibraryStatus)
+require File.join(__dir__, 'texture_applier') unless defined?(SamMadwar::SceneTextureSwitch::TextureApplier)
+require File.join(__dir__, 'preview_assets') unless defined?(SamMadwar::SceneTextureSwitch::PreviewAssets)
+require File.join(__dir__, 'surface_labels') unless defined?(SamMadwar::SceneTextureSwitch::SurfaceLabels)
+
+module SamMadwar::SceneTextureSwitch
   # Converts SketchUp pages and texture readiness into plain serializable data
   # for the overview. It does not alter the model or filesystem.
   module SceneSnapshot

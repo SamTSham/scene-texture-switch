@@ -7,7 +7,7 @@ require_relative '../source/extension/scene_texture_switcher/texture_library_sta
 require_relative '../source/extension/scene_texture_switcher/texture_applier'
 
 class TextureApplierTest < Minitest::Test
-  Applier = SceneTextureSwitcher::TextureApplier
+  Applier = SamMadwar::SceneTextureSwitch::TextureApplier
 
   FakeTexture = Struct.new(:width, :height, :size)
 

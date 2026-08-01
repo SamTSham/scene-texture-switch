@@ -7,7 +7,7 @@ require_relative '../source/extension/scene_texture_switcher/texture_library_sta
 require_relative '../source/extension/scene_texture_switcher/scene_snapshot'
 
 class SceneSnapshotTest < Minitest::Test
-  Snapshot = SceneTextureSwitcher::SceneSnapshot
+  Snapshot = SamMadwar::SceneTextureSwitch::SceneSnapshot
 
   FakePage = Struct.new(:name, :persistent_id, :cue) do
     def get_attribute(_dictionary, _key, default)
@@ -32,7 +32,7 @@ class SceneSnapshotTest < Minitest::Test
       pages = FakePages.new([opening, finale])
       pages.selected_page = finale
       model = FakeModel.new(File.join(project, 'Set.skp'), pages)
-      discovery = SceneTextureSwitcher::TextureLibraryStatus.discover(project)
+      discovery = SamMadwar::SceneTextureSwitch::TextureLibraryStatus.discover(project)
 
       result = Snapshot.build(model, discovery)
 
@@ -69,7 +69,7 @@ class SceneSnapshotTest < Minitest::Test
       assets.fetch(cue, [])
     end
 
-    SceneTextureSwitcher::PreviewAssets.stub(:for_state, provider) do
+    SamMadwar::SceneTextureSwitch::PreviewAssets.stub(:for_state, provider) do
       warnings = Snapshot.send(:dimension_warnings, '/textures')
 
       assert_empty warnings['01']

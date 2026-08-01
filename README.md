@@ -1,58 +1,74 @@
-# Scene Texture Switcher
+# Scene TextureSwitch
 
-Controlled continuation of the published, working Scene Texture Switcher v1.3.
+Scene TextureSwitch makes named SketchUp materials show different image files
+in different scenes.
 
-## Current state
+It was created for set-design workflows involving projections, LED surfaces,
+scenic graphics, signage, and other images that must change with SketchUp
+scenes. It works locally without an account, subscription, licence check,
+telemetry, or internet connection.
 
-The canonical v1.3 source has been imported from the original working RBZ and recorded by checksum. No replacement `core.rb` has been invented.
+## The basic idea
 
-## Non-negotiable baseline
-
-Published v1.3 is the only canonical engine. Before any new feature is accepted, these behaviours must remain intact:
-
-- extension registration and menu entry;
-- scene-change detection;
-- automatic texture switching;
-- texture scale and mapping preservation;
-- existing texture-folder discovery;
-- the working selector;
-- model stability during repeated scene changes.
-
-See `docs/PROJECT_RULES.md` and `docs/REGRESSION_CHECKLIST.md`.
-
-The plain-language version plan is in `docs/DEVELOPMENT_ROADMAP.md`.
-
-Recovered aspirational ideas and rejected detours are evaluated in `docs/FEATURE_BACKLOG.md`.
-
-## First development milestone
-
-1. Confirm the imported v1.3 baseline in the existing `Texture-Test.skp` model.
-2. Build a read-only migration preview from surface-first to scene-first storage.
-3. Add regenerable scene-name marker files without changing image files.
-4. Add the compact status overview without modifying the switching engine.
-
-## Planned user-facing behaviour
-
-Textures will be grouped by stable scene-state number, with a visible marker filename providing the SketchUp scene name:
+Name controlled SketchUp materials `Surface01`, `Surface02`, and so on. Keep a
+folder beginning with `textures` beside the saved `.skp` model. Each scene then
+chooses a numbered picture set:
 
 ```text
-Textures — Project Name/
-├── 01/
-│   ├── Opening.txt
-│   ├── Surface01.png
-│   └── Surface02.png
-└── 02/
-    ├── Kitchen - Evening.txt
-    ├── Surface01.png
-    └── Surface02.png
+My Project/
+├── My Set.skp
+└── textures — My Set/
+    ├── 01/
+    │   ├── Surface01.png
+    │   └── Surface02.png
+    └── 02/
+        ├── Surface01.png
+        └── Surface02.png
 ```
 
-Unsafe marker characters are replaced deterministically. Renaming a scene updates only a tiny marker file; numeric folders and images remain in place.
+Change scenes and the destination pictures appear immediately.
 
-The overview will show every scene with a status:
+## Install
 
-- black: ready in every required surface folder;
-- red: incomplete in one or more required surface folders;
-- grey: missing everywhere.
+1. Download the latest `.rbz` release.
+2. In SketchUp, open **Extensions → Extension Manager**.
+3. Click **Install Extension** and choose the downloaded RBZ.
+4. Restart SketchUp if requested.
+5. Open **Extensions → Scene TextureSwitch**.
 
-Interface rendering is not allowed to own or rewrite switching logic.
+## Quickest test
+
+Open **Settings + Quick Guide**, click **Show supplied starter folder**, and
+open `Texture_Test.skp` beside its supplied `textures - Starter` folder. Change
+between its three scenes to see the two example surfaces switch pictures.
+
+The example model is saved in SketchUp 2013 format.
+
+## Features
+
+- Assign picture sets to every scene from one compact palette.
+- Switch destination textures when a scene transition begins.
+- Organise pictures by scene or by surface.
+- See ready, incomplete, missing, and conflict states.
+- Preview textures as thumbnails or in a large view.
+- Add readable descriptions while retaining strict `Surface##` names.
+- Keep PSD, TIFF, PDF, and other working files beside exported pictures.
+- Work entirely offline.
+
+The complete illustrated guide is included inside the extension and in
+[`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
+
+## Compatibility
+
+Confirmed manually in SketchUp 2026 on macOS. Additional SketchUp and Windows
+versions will be listed after testing rather than claimed in advance.
+
+## Support
+
+Please use this repository's Issues page to report a problem. Include your
+SketchUp version, operating system, texture-folder layout, and the smallest
+example that reproduces the problem.
+
+## Licence
+
+Copyright © 2026 Sam Madwar. Released under the [MIT Licence](LICENSE).

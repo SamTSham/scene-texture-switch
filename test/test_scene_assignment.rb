@@ -5,7 +5,7 @@ require_relative '../source/extension/scene_texture_switcher/texture_library_sta
 require_relative '../source/extension/scene_texture_switcher/scene_assignment'
 
 class SceneAssignmentTest < Minitest::Test
-  Assignment = SceneTextureSwitcher::SceneAssignment
+  Assignment = SamMadwar::SceneTextureSwitch::SceneAssignment
 
   FakePage = Struct.new(:name, :persistent_id, :cue) do
     def set_attribute(_dictionary, _key, value)
