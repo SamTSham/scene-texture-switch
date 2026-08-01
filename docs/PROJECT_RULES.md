@@ -7,6 +7,8 @@
 3. Do not replace the loader, menu registration, observer, texture application, or mapping-preservation code merely to add a feature.
 4. Preserve an untouched copy of the canonical package and record its checksum.
 
+The installed SketchUp 2026 copy is also preserved as a production-proven behavioural reference after four successful set-design projects. It does not replace the canonical archive because its readiness interface is known to be defective.
+
 ## Change discipline
 
 1. One behavioural change per branch or patch.
@@ -31,4 +33,3 @@ A build cannot be labelled usable unless all of the following are confirmed:
 - missing textures are reported without disabling future switching;
 - saved scene-folder associations survive restart;
 - the status overview can fail or close without stopping automatic switching.
-

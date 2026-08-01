@@ -51,6 +51,8 @@ It already:
 
 No feature work begins until this exact package has been reconfirmed in the original test model.
 
+An additional SketchUp 2026 installed build has since been confirmed through four real set-design projects. It retains dependable switching and immediate dropdown selection, while its readiness colours are defective. Future work uses the published archive as the source baseline and the installed build as a second behavioural benchmark.
+
 ### Your test
 
 1. Install the preserved v1.0.0 release.

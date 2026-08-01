@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Select Texture Cue</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+    .legend {
+      font-size: 12px;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+    select {
+      font-size: 14px;
+      padding: 6px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    h3 {
+      margin-bottom: 5px;
+    }
+  </style>
+  <script>
+    function populateDropdown(values) {
+      const selector = document.getElementById('cueSelector');
+      selector.innerHTML = '';
+      for (let i = 0; i < values.length; i++) {
+        const option = document.createElement('option');
+        option.value = values[i];
+        option.text = values[i];
+        selector.appendChild(option);
+      }
+    }
+
+    function cueChanged() {
+      const cueText = document.getElementById('cueSelector').value;
+      const cueNumber = cueText.match(/\d+/)[0];
+      window.sketchup.setCue(cueNumber);
+    }
+
+    window.onload = function() {
+      if (window.sketchup && window.sketchup.requestDropdown) {
+        window.sketchup.requestDropdown();
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="legend">Textures: ⬛ ready &nbsp; 🟥 incomplete &nbsp; ⬜ missing</div>
+  <h3>Select Texture Number</h3>
+  <select id="cueSelector" onchange="cueChanged()"></select>
+</body>
+</html>

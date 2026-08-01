@@ -14,3 +14,4 @@
 - Forensically reviewed three marked v1.4 experiments and documented reusable requirements and rejected code paths.
 - Added a plain-language public version roadmap from 1.0.0 through the future Scene State Manager 2.0.0.
 - Revised version 1.1 around stable numeric scene-state folders, strict `Surface##` images, and regenerable scene-name markers.
+- Preserved and documented the installed SketchUp 2026 build as a four-project production baseline separate from canonical v1.3.
