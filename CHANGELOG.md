@@ -1,0 +1,10 @@
+# Changelog
+
+## Unreleased
+
+- Created guarded continuation project.
+- Documented published v1.3 as the immutable canonical baseline.
+- Specified scene-name folder sanitising, duplicate suffixes, and stable identity mapping.
+- Specified compact scene status overview and regression gates.
+- Deferred all menu polish until core behaviour and the first two organisational features pass regression testing.
+

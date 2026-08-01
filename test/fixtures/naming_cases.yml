@@ -1,0 +1,22 @@
+cases:
+  - scene: "Opening"
+    expected: "Opening"
+  - scene: "Kitchen / Evening"
+    expected: "Kitchen - Evening"
+  - scene: "Act 1\\Scene 4"
+    expected: "Act 1 - Scene 4"
+  - scene: "  Finale  "
+    expected: "Finale"
+  - scene: "..."
+    expected: "Untitled Scene"
+
+duplicates:
+  input:
+    - "Kitchen"
+    - "Kitchen"
+    - "Kitchen"
+  expected:
+    - "Kitchen"
+    - "Kitchen.2"
+    - "Kitchen.3"
+
