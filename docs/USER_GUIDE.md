@@ -1,76 +1,91 @@
-# Scene Textures 1.2
+# Scene TextureSwitch
 
-Scene Textures is an offline SketchUp extension for changing coordinated
-projection, LED, scenic, or other planned material images with SketchUp scenes.
+## What is this?
 
-## The principle
+SketchUp scenes cannot normally make one material show different image files in
+different scenes. **Scene TextureSwitch adds that missing switch.**
 
-Name controlled SketchUp materials `Surface01`, `Surface02`, and so on. Every
-SketchUp scene stores one numbered texture state. All controlled surfaces use
-the files belonging to that number, while their existing SketchUp material size
-and mapping remain unchanged.
+Keep the saved `.skp` file and a folder beginning with `textures` together in
+the same project folder. Each scene chooses a numbered set of pictures.
 
-Replace the image files repeatedly as the design develops. Scene Textures does
-not take ownership of the artwork.
+Edit or replace those pictures, and the textures, projections or LED content in
+the model change with the scenes.
 
-## Scene-first library
+## The basic idea
 
-Keep one texture library beside the saved `.skp` model:
+A SketchUp scene chooses a numbered folder. Every controlled material loads its
+matching picture from that folder.
+
+**Folder number = when the picture appears. Surface number = where the picture
+appears.**
 
 ```text
-Textures — Project Name/
-├── 01/
-│   ├── 01_Opening.txt
-│   ├── Surface01.png
-│   └── Surface02.png
-└── 02/
-    ├── 02_Hotel.txt
-    ├── Surface01.png
-    └── Surface02.png
+My Project/
+├── My Set.skp
+└── textures — My Set/
+    ├── 01/
+    │   ├── Surface01.png
+    │   └── Surface02.png
+    └── 02/
+        ├── Surface01.png
+        └── Surface02.png
 ```
 
-The numbered folder is the stable technical state. The generated `.txt` marker
-makes scene names visible in Finder and is safely updated after scene edits.
+The texture folder may be called `textures`, `textures — Hamlet`, or anything
+else beginning with the word `textures`. The rest of its name is only for your
+orientation.
 
-Legacy `textures/Surface01/01.png` projects remain supported. Use **Create
-Verified Scene-First Copy** when you want to migrate; the existing library is
-never rearranged.
+## Five-minute setup
 
-## Palette
+1. Save the SketchUp model.
+2. Put the supplied starter texture folder beside the `.skp` file.
+3. Name controlled SketchUp materials `Surface01`, `Surface02`, and so on.
+4. Edit or replace the placeholder pictures while keeping their filenames.
+5. Open **Extensions → Scene TextureSwitch → Open Scene TextureSwitch** and
+   choose a picture-set number for each scene.
 
-- Open **Extensions → Scene Textures → Open Scene Textures**.
-- Click a scene's number to assign a texture state without changing scene.
-- Double-click a scene row to activate that SketchUp scene.
-- Hover a number to inspect its surface thumbnails.
-- Press `z` or click a thumbnail for a large preview.
-- Use the folder button to reveal the texture-library root.
-- Use the circular arrow after replacing the current scene's image in an editor.
+## Everyday use
 
-Status: black is ready, red is incomplete, grey is missing, and amber indicates
-a conflict or housekeeping warning. Hover the row to read the explanation.
+- Click a number to assign pictures without visiting that scene.
+- Double-click a row to visit its SketchUp scene.
+- Hover a number for thumbnails; press `z` or click for a large preview.
+- Use the folder button to open the complete texture folder.
+- After editing the current pictures, change scene and return—or click reload.
 
-## Image files
+Scene TextureSwitch creates small `.txt` labels inside numbered folders so you
+can see which SketchUp scenes use them. Optional surface descriptions create
+similar labels at the texture-folder root.
 
-PNG, JPG, and JPEG are output textures. PNG takes precedence. If several output
-alternatives exist for the same surface and state, the palette reports a
-conflict. PSD, TIFF, PDF, and other working files may remain in the library and
-do not affect readiness.
+## Organise by scene or by surface
 
-All numbered versions of one `Surface##` should use identical pixel dimensions.
-Different surfaces may use different dimensions and aspect ratios. SketchUp's
-conservative shared baseline is 1024 pixels; larger textures depend on graphics
-settings and hardware.
+Scene TextureSwitch normally keeps all pictures for one scene together:
 
-## Settings and surface descriptions
+```text
+01/Surface01.png
+01/Surface02.png
+```
 
-Open **Settings & Quick Guide** to add optional descriptions such as
-`Surface01 — Rear LED wall`. The strict material and image names do not change.
-Descriptions are saved in `_Scene Texture Settings.json` inside the library so
-they travel with the project.
+If you prefer to keep all versions of one surface together, this also works:
 
-## Safety
+```text
+Surface01/01.png
+Surface01/02.png
+```
 
-- Texture images are never renamed, resized, repaired, or deleted automatically.
-- Assigning an empty number may create its folder and scene marker, but no image.
-- Migration writes a separate verified copy and produces a report.
-- Automatic switching continues without the palette being open.
+The extension recognises either arrangement automatically. It does not move,
+convert or duplicate your pictures.
+
+## Picture files
+
+- PNG, JPG and JPEG work. PNG is preferred.
+- PSD, TIFF, PDF and other working files may remain and are ignored.
+- All versions of one `Surface##` should normally have matching dimensions.
+- Different surfaces may have different shapes and sizes.
+- 1024 pixels is the safest common SketchUp baseline. Larger pictures depend on
+  graphics settings and hardware.
+
+Status colours are black for ready, red for incomplete, grey for missing and
+amber when files need attention. Hover the row to read the explanation.
+
+Scene TextureSwitch never resizes, repairs, deletes or overwrites your artwork.
+The simplest workflow is ordinary Finder copying, editing and replacing.

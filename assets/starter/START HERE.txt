@@ -1,0 +1,14 @@
+SCENE TEXTURESWITCH STARTER PICTURES
+
+Copy this complete "textures - Starter" folder beside your saved SketchUp file.
+
+FOLDER NUMBER = WHEN THE PICTURE APPEARS.
+SURFACE NUMBER = WHERE THE PICTURE APPEARS.
+
+The folders 01, 02 and 03 are three example picture sets. Each contains a
+Surface01.png and Surface02.png placeholder. Edit or replace those pictures
+while keeping the filenames, then assign 01, 02 or 03 to your SketchUp scenes
+in Scene TextureSwitch.
+
+The texture folder may be renamed. Its name only needs to begin with
+"textures". For example: textures – Hamlet

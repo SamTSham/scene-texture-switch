@@ -3,68 +3,99 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Scene Textures Settings</title>
+  <title>Scene TextureSwitch — Settings & Quick Guide</title>
   <style>
-    :root{color-scheme:light dark;--bg:#f4f4f3;--panel:#fff;--text:#171717;--muted:#707070;--line:#d8d8d6;--accent:#2c76c7}
+    :root{color-scheme:light dark;--bg:#f4f4f3;--panel:#fff;--text:#171717;--muted:#6d6d6d;--line:#d8d8d6;--accent:#2c76c7}
     @media(prefers-color-scheme:dark){:root{--bg:#282828;--panel:#323232;--text:#f0f0f0;--muted:#aaa;--line:#4a4a4a}}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    header{position:sticky;top:0;display:flex;gap:4px;padding:7px;border-bottom:1px solid var(--line);background:var(--panel)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:12px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .view{padding:13px}.view[hidden]{display:none}h1{margin:0 0 7px;font-size:17px}h2{margin:18px 0 6px;font-size:14px}h3{margin:14px 0 4px;font-size:12px}p{margin:5px 0;color:var(--muted)}
+    .intro{padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.intro strong{color:var(--text)}
     button{border:1px solid var(--line);border-radius:5px;padding:5px 8px;background:var(--panel);color:inherit;font:inherit}button:hover{border-color:var(--accent)}
-    .tab.active{background:var(--accent);border-color:var(--accent);color:#fff}.view{padding:12px}.view[hidden]{display:none}
-    h2{margin:0 0 8px;font-size:15px}h3{margin:16px 0 5px;font-size:12px}p{margin:5px 0;color:var(--muted)}
-    .facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--panel)}
-    .facts span:nth-child(odd){color:var(--muted)}.path{overflow-wrap:anywhere}
-    .actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
-    .surface-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:7px;align-items:center;margin:5px 0}
-    input{width:100%;border:1px solid var(--line);border-radius:5px;padding:5px 7px;background:var(--panel);color:inherit;font:inherit}
+    .primary{margin-top:9px;color:var(--accent)}.back{margin-bottom:10px}.facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--panel)}
+    .facts span:nth-child(odd){color:var(--muted)}.path{overflow-wrap:anywhere}.actions{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 15px}
+    .surface-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:7px;align-items:center;margin:5px 0}input{width:100%;border:1px solid var(--line);border-radius:5px;padding:5px 7px;background:var(--panel);color:inherit;font:inherit}
     footer{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-top:1px solid var(--line);background:var(--panel);color:var(--muted)}
-    strong{color:var(--text)}ul{margin:5px 0;padding-left:19px;color:var(--muted)}code{color:var(--text)}
+    strong,code{color:var(--text)}ul,ol{margin:5px 0;padding-left:20px;color:var(--muted)}pre{overflow:auto;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font-size:11px}
   </style>
 </head>
 <body>
-  <header><button class="tab active" data-view="settings">Settings</button><button class="tab" data-view="guide">Quick guide / FAQ</button></header>
   <section class="view" id="settings">
-    <h2>Project texture library</h2>
-    <div class="facts"><span>Version</span><strong id="version">—</strong><span>Organisation</span><strong id="layout">—</strong><span>Location</span><span class="path" id="path">—</span></div>
-    <div class="actions"><button id="reveal">Reveal in Finder</button><button id="migrate">Create scene-first copy…</button><button id="adopt">Adopt verified copy…</button></div>
+    <h1>What is Scene TextureSwitch?</h1>
+    <div class="intro">
+      <p>SketchUp scenes cannot normally make one material show different image files in different scenes. <strong>Scene TextureSwitch adds that missing switch.</strong></p>
+      <p>Keep the saved <code>.skp</code> file and a folder beginning with <code>textures</code> together in the same project folder. Each scene chooses a numbered set of pictures.</p>
+      <p>Edit or replace those pictures, and the textures, projections or LED content in the model change with the scenes.</p>
+      <button class="primary" id="readMore">Read the detailed guide…</button>
+    </div>
+    <h2>This project</h2>
+    <div class="facts"><span>Version</span><strong id="version">—</strong><span>Picture folders</span><strong id="layout">—</strong><span>Location</span><span class="path" id="path">—</span></div>
+    <div class="actions"><button id="reveal">Reveal project textures</button><button id="starter">Show supplied starter folder</button></div>
     <h2>Surface descriptions</h2>
-    <p>Optional descriptions improve orientation. Technical material and file names remain unchanged.</p>
+    <p>Optional descriptions make names such as <code>Surface01</code> easier to recognise. Image and material names remain unchanged.</p>
     <div id="surfaces"></div>
   </section>
+
   <section class="view" id="guide" hidden>
-    <h2>The whole principle</h2>
-    <p>Name controlled SketchUp materials <code>Surface01</code>, <code>Surface02</code>, and so on. Every scene chooses one numbered texture state. Replace those images as the design develops; Scene Textures changes them with the scenes while preserving material mapping.</p>
-    <h3>Files</h3><ul><li>PNG is preferred; JPG and JPEG are accepted.</li><li>PSD and other working files may remain beside the outputs.</li><li>Use matching pixel dimensions across all states of one surface.</li><li>1024 px is the safest shared SketchUp baseline; larger images depend on graphics settings and hardware.</li></ul>
-    <h3>Palette</h3><ul><li>Click a texture number to assign a state without changing scene.</li><li>Double-click a row to visit that scene.</li><li>Hover a number for thumbnails; press <code>z</code> or click for a large preview.</li><li>The circular arrow reloads edited images for the current scene.</li></ul>
-    <h3>Status</h3><ul><li>Black: ready.</li><li>Red: incomplete.</li><li>Grey: missing.</li><li>Amber: conflict or housekeeping warning.</li></ul>
-    <h3>Safety</h3><p>Migration creates and verifies a separate copy. It never rearranges the only working texture library.</p>
+    <button class="back" id="back">← Back to Settings</button>
+    <h1>Scene TextureSwitch — Detailed Guide</h1>
+    <h2>The basic idea</h2>
+    <p>A SketchUp scene chooses a numbered folder. Every controlled material loads its matching picture from that folder.</p>
+    <p><strong>Folder number = when the picture appears. Surface number = where the picture appears.</strong></p>
+    <pre>My Project/
+├── My Set.skp
+└── textures — My Set/
+    ├── 01/
+    │   ├── Surface01.png
+    │   └── Surface02.png
+    └── 02/
+        ├── Surface01.png
+        └── Surface02.png</pre>
+    <p>The texture folder may be called <code>textures</code>, <code>textures — Hamlet</code>, or anything else beginning with the word <code>textures</code>. The rest of its name is only for your orientation.</p>
+
+    <h2>Five-minute setup</h2>
+    <ol><li>Save the SketchUp model.</li><li>Put the supplied starter texture folder beside the <code>.skp</code> file.</li><li>Name controlled SketchUp materials <code>Surface01</code>, <code>Surface02</code>, and so on.</li><li>Edit or replace the supplied placeholder pictures while keeping their filenames.</li><li>Open Scene TextureSwitch and choose a picture-set number for each scene.</li></ol>
+
+    <h2>Everyday use</h2>
+    <ul><li>Click a number to assign pictures without visiting that scene.</li><li>Double-click a row to visit its SketchUp scene.</li><li>Hover a number for thumbnails; press <code>z</code> or click for a large preview.</li><li>Use the folder button to open the complete texture folder.</li><li>After editing the current pictures, change scene and return—or click the circular reload arrow.</li></ul>
+
+    <h2>Finder labels</h2>
+    <p>Scene TextureSwitch creates small <code>.txt</code> labels inside numbered folders so you can see which SketchUp scenes use them. Surface descriptions create similar label files at the texture-folder root. These are orientation labels, not artwork.</p>
+
+    <h2>Organise by scene or by surface</h2>
+    <p>Scene TextureSwitch normally keeps all pictures for one scene together:</p><pre>01/Surface01.png
+01/Surface02.png</pre>
+    <p>If you prefer to keep all versions of one surface together, this also works:</p><pre>Surface01/01.png
+Surface01/02.png</pre>
+    <p>The extension recognises either arrangement automatically. It does not move, convert or duplicate your pictures.</p>
+
+    <h2>Picture files</h2>
+    <ul><li>PNG, JPG and JPEG work. PNG is preferred.</li><li>PSD, TIFF, PDF and other working files may stay beside the pictures and are ignored.</li><li>All versions of one <code>Surface##</code> should normally have identical pixel dimensions.</li><li>Different surfaces may use different shapes and sizes.</li><li>1024 pixels is the safest common SketchUp baseline; larger pictures depend on graphics settings and hardware.</li></ul>
+
+    <h2>Status colours</h2>
+    <ul><li>Black: all expected pictures are present.</li><li>Red: some are present and some are missing.</li><li>Grey: none are present.</li><li>Amber: the files need attention. Hover the row to read why.</li></ul>
+
+    <h2>What the extension never does</h2>
+    <p>It never resizes, repairs, deletes or overwrites your artwork. The simplest workflow is ordinary Finder copying and replacing.</p>
   </section>
-  <footer><span id="message">Descriptions are stored with this texture library.</span><button id="save">Save descriptions</button></footer>
+
+  <footer><span id="message">Descriptions are stored with this texture folder.</span><button id="save">Save descriptions</button></footer>
   <script>
     (()=>{
-      let data=null;
       const byId=id=>document.getElementById(id);
-      document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
-        document.querySelectorAll('.tab').forEach(item=>item.classList.toggle('active',item===tab));
-        document.querySelectorAll('.view').forEach(view=>view.hidden=view.id!==tab.dataset.view);
-        byId('save').hidden=tab.dataset.view!=='settings';
-      }));
+      function show(view){byId('settings').hidden=view!=='settings';byId('guide').hidden=view!=='guide';byId('save').hidden=view!=='settings'}
       function render(snapshot){
-        data=snapshot;byId('version').textContent=snapshot.version;byId('layout').textContent=snapshot.layout_label;byId('path').textContent=snapshot.library_path||'No library found';
+        byId('version').textContent=snapshot.version;byId('layout').textContent=snapshot.layout_label;byId('path').textContent=snapshot.library_path||'No texture folder found beside this model';
         const host=byId('surfaces');host.innerHTML='';
-        snapshot.surfaces.forEach(surface=>{const row=document.createElement('label');row.className='surface-row';const name=document.createElement('strong');name.textContent=surface;const input=document.createElement('input');input.value=snapshot.labels[surface]||'';input.placeholder='Optional description';input.dataset.surface=surface;row.append(name,input);host.appendChild(row);});
-        if(!snapshot.surfaces.length)host.innerHTML='<p>No Surface## textures found yet.</p>';
+        snapshot.surfaces.forEach(surface=>{const row=document.createElement('label');row.className='surface-row';const name=document.createElement('strong');name.textContent=surface;const input=document.createElement('input');input.value=snapshot.labels[surface]||'';input.placeholder='Optional description';input.dataset.surface=surface;row.append(name,input);host.appendChild(row)});
+        if(!snapshot.surfaces.length)host.innerHTML='<p>No Surface## pictures found yet.</p>';
       }
-      function saved(){byId('message').textContent='Surface descriptions saved.';setTimeout(()=>byId('message').textContent='Descriptions are stored with this texture library.',2200)}
+      function saved(){byId('message').textContent='Surface descriptions and labels saved.';setTimeout(()=>byId('message').textContent='Descriptions are stored with this texture folder.',2200)}
       window.SceneTextureSettings={render,saved};
+      byId('readMore').addEventListener('click',()=>show('guide'));byId('back').addEventListener('click',()=>show('settings'));
       byId('reveal').addEventListener('click',()=>window.sketchup&&window.sketchup.revealLibrary());
-      byId('migrate').addEventListener('click',()=>window.sketchup&&window.sketchup.migrateLibrary());
-      byId('adopt').addEventListener('click',()=>window.sketchup&&window.sketchup.adoptLibrary());
-      byId('save').addEventListener('click',()=>{const labels={};document.querySelectorAll('input[data-surface]').forEach(input=>labels[input.dataset.surface]=input.value);if(window.sketchup)window.sketchup.saveSurfaceLabels(JSON.stringify(labels));});
-      window.addEventListener('load',()=>{
-        if(window.sketchup){window.sketchup.requestSettings();return}
-        if(new URLSearchParams(window.location.search).has('preview'))render({version:'1.2.0-rc.1',layout_label:'Scene-first',library_path:'/Projects/Hotel/Textures — Hotel',surfaces:['Surface01','Surface02','Surface03'],labels:{Surface01:'Rear LED wall',Surface02:'Projection gauze'}});
-      });
+      byId('starter').addEventListener('click',()=>window.sketchup&&window.sketchup.revealStarter());
+      byId('save').addEventListener('click',()=>{const labels={};document.querySelectorAll('input[data-surface]').forEach(input=>labels[input.dataset.surface]=input.value);if(window.sketchup)window.sketchup.saveSurfaceLabels(JSON.stringify(labels))});
+      window.addEventListener('load',()=>{if(window.sketchup){window.sketchup.requestSettings();return}if(new URLSearchParams(window.location.search).has('preview'))render({version:'1.2.0-rc.2',layout_label:'Organised by scene',library_path:'/Projects/Hotel/textures — Hotel',surfaces:['Surface01','Surface02'],labels:{Surface01:'Rear LED wall'}})});
     })();
   </script>
 </body>

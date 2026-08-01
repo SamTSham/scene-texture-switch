@@ -8,21 +8,17 @@ require File.join(__dir__, 'overview_pages_observer')
 require File.join(__dir__, 'scene_assignment')
 require File.join(__dir__, 'library_association')
 require File.join(__dir__, 'texture_applier')
-require File.join(__dir__, 'scene_first_bridge')
 require File.join(__dir__, 'scene_marker_name')
 require File.join(__dir__, 'scene_marker_sync')
 require File.join(__dir__, 'preview_assets')
 require File.join(__dir__, 'surface_labels')
-require File.join(__dir__, 'legacy_library_scanner')
-require File.join(__dir__, 'migration_planner')
-require File.join(__dir__, 'verified_scene_first_migration')
 
 module SceneTextureSwitcher
   # Unified offline controller for switching, assignment, organisation, and help.
   module OverviewPreview
     extend self
 
-    VERSION = '1.2.0-rc.1'
+    VERSION = '1.2.0-rc.2'
 
     def activate
       if @dialog && @dialog.visible?
@@ -32,7 +28,7 @@ module SceneTextureSwitcher
       end
 
       @dialog = UI::HtmlDialog.new({
-        :dialog_title => 'Scene Textures',
+        :dialog_title => 'Scene TextureSwitch',
         :preferences_key => 'SceneTexturesPalette',
         :scrollable => false,
         :resizable => true,
@@ -81,7 +77,7 @@ module SceneTextureSwitcher
       end
 
       @settings_dialog = UI::HtmlDialog.new({
-        :dialog_title => 'Scene Textures — Settings & Guide',
+        :dialog_title => 'Scene TextureSwitch — Settings & Quick Guide',
         :preferences_key => 'SceneTextureSettings',
         :scrollable => true,
         :resizable => true,
@@ -94,8 +90,7 @@ module SceneTextureSwitcher
       @settings_dialog.set_file(File.join(__dir__, 'html', 'settings.html'))
       @settings_dialog.add_action_callback('requestSettings') { |_context| refresh_settings }
       @settings_dialog.add_action_callback('revealLibrary') { |_context| reveal_library }
-      @settings_dialog.add_action_callback('migrateLibrary') { |_context| migrate_scene_first_copy }
-      @settings_dialog.add_action_callback('adoptLibrary') { |_context| adopt_existing_scene_first_copy }
+      @settings_dialog.add_action_callback('revealStarter') { |_context| reveal_starter }
       @settings_dialog.add_action_callback('saveSurfaceLabels') do |_context, json|
         save_surface_labels(json)
       end
@@ -111,7 +106,7 @@ module SceneTextureSwitcher
       surfaces = root ? PreviewAssets.surface_names(root) : []
       snapshot = {
         version: VERSION,
-        layout_label: { scene_first: 'Scene-first', legacy: 'Legacy surface-first', mixed: 'Mixed — needs attention' }[layout] || 'Not found',
+        layout_label: { scene_first: 'Organised by scene', legacy: 'Organised by surface', mixed: 'Mixed folders — needs attention' }[layout] || 'Not found',
         library_path: root,
         surfaces: surfaces,
         labels: SurfaceLabels.load(root)
@@ -265,110 +260,13 @@ module SceneTextureSwitcher
       UI.messagebox("The texture folder could not be opened.\n\n#{error.message}")
     end
 
-    def migrate_scene_first_copy
-      model = Sketchup.active_model
-      if model.path.to_s.empty?
-        UI.messagebox('Save the SketchUp model before creating a scene-first texture copy.')
-        return
-      end
+    def reveal_starter
+      folder = File.join(__dir__, 'starter', 'textures - Starter')
+      return UI.messagebox('The supplied starter folder is missing from this installation.') unless Dir.exist?(folder)
 
-      project_dir = File.dirname(model.path)
-      source = legacy_source(project_dir)
-      unless source
-        UI.messagebox('Exactly one legacy Surface## texture library is required for migration.')
-        return
-      end
-
-      model_label = SceneMarkerName.sanitize(File.basename(model.path, File.extname(model.path)), 80)
-      destination_name = "Textures — #{model_label}"
-      destination = File.join(project_dir, destination_name)
-      if File.exist?(destination)
-        UI.messagebox("The migration destination already exists:\n\n#{destination}\n\nNothing was changed.")
-        return
-      end
-
-      answer = UI.messagebox(
-        "Create a verified scene-first copy?\n\n" \
-        "Source: #{source}\nDestination: #{destination}\n\n" \
-        'The existing texture library will not be changed.',
-        MB_YESNO
-      )
-      return unless answer == IDYES
-
-      scan = LegacyLibraryScanner.new(source).scan
-      plan = MigrationPlanner.new(scan).plan
-      scenes = scene_records(model)
-      result = VerifiedSceneFirstMigration.new(plan, SceneMarkerName).execute(destination, scenes)
-
-      adopt = UI.messagebox(
-        "Verified copy complete.\n\n" \
-        "Textures copied: #{result[:copied].length}\nScene labels: #{result[:markers].length}\n" \
-        "Report: #{result[:report_path]}\n\n" \
-        'Use this scene-first copy for the current model?',
-        MB_YESNO
-      )
-      adopt_library(model, destination_name) if adopt == IDYES
-      refresh(@dialog)
+      UI.openURL(PreviewAssets.file_url(folder))
     rescue StandardError => error
-      UI.messagebox("Scene-first copy was not completed.\n\n#{error.message}\n\nThe legacy library was not changed.")
-    end
-
-    def adopt_library(model, folder_name)
-      model.start_operation('Adopt Scene Texture Library', true)
-      LibraryAssociation.set(model, folder_name)
-      model.commit_operation
-      scene = model.pages.selected_page
-      if scene
-        cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
-        apply_current_texture(TextureLibraryStatus.normalize_cue(cue))
-      end
-    rescue StandardError
-      model.abort_operation
-      raise
-    end
-
-    def adopt_existing_scene_first_copy
-      model = Sketchup.active_model
-      if model.path.to_s.empty?
-        UI.messagebox('Save the SketchUp model before adopting a texture library.')
-        return
-      end
-
-      project_dir = File.dirname(model.path)
-      candidates = Dir.children(project_dir).sort.map do |entry|
-        path = File.join(project_dir, entry)
-        next unless File.directory?(path) && entry.match?(TextureLibraryStatus::LIBRARY_NAME)
-        next unless TextureLibraryStatus.layout(path) == :scene_first
-        next unless File.file?(File.join(path, VerifiedSceneFirstMigration::REPORT_NAME))
-
-        path
-      end.compact
-      unless candidates.length == 1
-        UI.messagebox('Exactly one verified scene-first copy must be beside the model for automatic adoption.')
-        return
-      end
-
-      library = candidates.first
-      answer = UI.messagebox(
-        "Use this verified scene-first copy for the current model?\n\n#{library}\n\n" \
-        'The legacy texture library will remain unchanged.',
-        MB_YESNO
-      )
-      return unless answer == IDYES
-
-      adopt_library(model, File.basename(library))
-      refresh(@dialog)
-    rescue StandardError => error
-      UI.messagebox("The scene-first copy was not adopted.\n\n#{error.message}")
-    end
-
-    def legacy_source(project_dir)
-      candidates = Dir.children(project_dir).sort.map do |entry|
-        path = File.join(project_dir, entry)
-        path if File.directory?(path) && entry.match?(TextureLibraryStatus::LIBRARY_NAME) &&
-          TextureLibraryStatus.layout(path) == :legacy
-      end.compact
-      candidates.length == 1 ? candidates.first : nil
+      UI.messagebox("The starter folder could not be opened.\n\n#{error.message}")
     end
 
     def scene_records(model)
@@ -385,11 +283,7 @@ module SceneTextureSwitcher
       model = Sketchup.active_model
       return if model.path.to_s.empty?
 
-      preferred = LibraryAssociation.folder_name(model)
-      return unless preferred
-
-      discovery = TextureLibraryStatus.discover(File.dirname(model.path), preferred)
-      root = discovery[:root]
+      root = current_library_root
       return unless root && TextureLibraryStatus.layout(root) == :scene_first
 
       SceneMarkerSync.sync(root, scene_records(model))
@@ -452,12 +346,9 @@ module SceneTextureSwitcher
   end
 
   unless file_loaded?(__FILE__)
-    menu = UI.menu('Extensions').add_submenu('Scene Textures')
-    menu.add_item('Open Scene Textures') { OverviewPreview.activate }
+    menu = UI.menu('Extensions').add_submenu('Scene TextureSwitch')
+    menu.add_item('Open Scene TextureSwitch') { OverviewPreview.activate }
     menu.add_item('Settings & Quick Guide…') { OverviewPreview.activate_settings }
-    menu.add_separator
-    menu.add_item('Create Verified Scene-First Copy…') { OverviewPreview.migrate_scene_first_copy }
-    menu.add_item('Adopt Verified Scene-First Copy…') { OverviewPreview.adopt_existing_scene_first_copy }
     OverviewPreview.start_scene_polling
     file_loaded(__FILE__)
   end

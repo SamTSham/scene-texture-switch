@@ -8,6 +8,13 @@ require_relative '../source/extension/scene_texture_switcher/texture_library_sta
 class TextureLibraryStatusTest < Minitest::Test
   Status = SceneTextureSwitcher::TextureLibraryStatus
 
+  def test_texture_folder_suffix_is_only_a_human_label
+    %w[textures texturesAnything].each { |name| assert_match Status::LIBRARY_NAME, name }
+    assert_match Status::LIBRARY_NAME, 'Textures WHATEVER HELPS ME'
+    assert_match Status::LIBRARY_NAME, 'textures — Hamlet'
+    refute_match Status::LIBRARY_NAME, '_textures-old'
+  end
+
   def test_discovers_plain_and_project_named_texture_folders
     Dir.mktmpdir do |root|
       FileUtils.mkdir_p(File.join(root, 'Textures — Hamlet'))

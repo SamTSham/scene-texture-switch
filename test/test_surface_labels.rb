@@ -20,6 +20,9 @@ class SurfaceLabelsTest < Minitest::Test
       assert_equal({ 'Surface01' => 'Rear LED wall', 'Surface02' => 'Projection gauze' }, saved)
       assert_equal saved, Labels.load(root)
       assert File.file?(File.join(root, Labels::FILE_NAME))
+      marker = File.join(root, 'Surface01 — Rear LED wall.txt')
+      assert File.file?(marker)
+      assert_includes File.read(marker), Labels::MARKER_HEADER
     end
   end
 
@@ -27,5 +30,18 @@ class SurfaceLabelsTest < Minitest::Test
     labels = { 'Surface01' => 'Rear LED wall' }
     assert_equal 'Surface01 — Rear LED wall', Labels.display('Surface01', labels)
     assert_equal 'Surface02', Labels.display('Surface02', labels)
+  end
+
+  def test_updating_labels_removes_only_managed_markers
+    Dir.mktmpdir do |root|
+      unrelated = File.join(root, 'My notes.txt')
+      File.write(unrelated, 'keep me')
+      Labels.save(root, { 'Surface01' => 'Rear wall' })
+      Labels.save(root, { 'Surface02' => 'Floor' })
+
+      refute File.exist?(File.join(root, 'Surface01 — Rear wall.txt'))
+      assert File.exist?(File.join(root, 'Surface02 — Floor.txt'))
+      assert_equal 'keep me', File.read(unrelated)
+    end
   end
 end

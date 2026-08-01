@@ -1,0 +1,4 @@
+PICTURE SET 03
+
+Every image in this folder appears when a SketchUp scene is assigned number 03.
+The Surface number in each filename tells Scene TextureSwitch where it appears.

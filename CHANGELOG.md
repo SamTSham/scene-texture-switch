@@ -50,3 +50,7 @@
   Scene Textures submenu for `1.2.0-rc.1`; added an offline Quick Guide,
   project-carried surface descriptions, a retirement shim for the former
   companion extension, and publishable RBZ packaging.
+- Renamed the public tool Scene TextureSwitch and reduced `1.2.0-rc.2` to two
+  commands; rewrote help from a beginner's problem, accepted any texture-folder
+  suffix, added visible surface-description markers, removed public copy and
+  migration machinery, and packaged the original six PNG placeholders by scene.

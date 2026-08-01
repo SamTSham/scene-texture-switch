@@ -1,0 +1,11 @@
+SCENE TEXTURESWITCH ORIENTATION
+
+FOLDER NUMBER = WHEN THE PICTURE APPEARS.
+SURFACE NUMBER = WHERE THE PICTURE APPEARS.
+
+Example:
+
+01/Surface02.png
+
+01 means this picture belongs to picture set 01.
+Surface02 means the picture appears on the SketchUp material named Surface02.

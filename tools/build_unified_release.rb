@@ -4,10 +4,14 @@ require 'fileutils'
 require 'tmpdir'
 
 ROOT = File.expand_path('..', __dir__)
-VERSION = '1.2.0-rc.1'
-OUTPUT = ARGV[0] || File.join(ROOT, 'builds', "SceneTextures_#{VERSION}.rbz")
+VERSION = '1.2.0-rc.2'
+OUTPUT = ARGV[0] || File.join(ROOT, 'builds', "SceneTextureSwitch_#{VERSION}.rbz")
 PREVIEW_SOURCE = File.join(ROOT, 'source', 'overview_preview')
 SHARED_SOURCE = File.join(ROOT, 'source', 'extension', 'scene_texture_switcher')
+STARTER_SOURCE = ENV.fetch(
+  'STS_STARTER_SOURCE',
+  '/Users/sammadwar/_PROJEKTE/SceneTextureSwitcher/scene_texture_switcher/textures'
+)
 
 Dir.mktmpdir('scene-textures-release') do |stage|
   folder = File.join(stage, 'scene_texture_overview_preview')
@@ -22,13 +26,30 @@ Dir.mktmpdir('scene-textures-release') do |stage|
   %w[
     texture_library_status.rb scene_snapshot.rb overview_pages_observer.rb
     scene_assignment.rb library_association.rb texture_applier.rb
-    scene_first_bridge.rb scene_marker_name.rb scene_marker_sync.rb
+    scene_marker_name.rb scene_marker_sync.rb
     preview_assets.rb surface_labels.rb
   ].each { |name| FileUtils.cp(File.join(SHARED_SOURCE, name), folder) }
   FileUtils.cp(File.join(SHARED_SOURCE, 'html', 'overview.html'), File.join(folder, 'html'))
 
-  %w[legacy_library_scanner.rb migration_planner.rb verified_scene_first_migration.rb].each do |name|
-    FileUtils.cp(File.join(ROOT, 'lib', 'scene_texture_switcher', name), folder)
+  starter = File.join(folder, 'starter', 'textures - Starter')
+  FileUtils.mkdir_p(starter)
+  Dir.children(File.join(ROOT, 'assets', 'starter')).each do |entry|
+    source = File.join(ROOT, 'assets', 'starter', entry)
+    FileUtils.cp(source, starter) if File.file?(source)
+  end
+  %w[01 02 03].each do |cue|
+    cue_folder = File.join(starter, cue)
+    FileUtils.mkdir_p(cue_folder)
+    FileUtils.cp(
+      File.join(ROOT, 'assets', 'starter', cue, "_PICTURE SET #{cue}.txt"),
+      cue_folder
+    )
+    %w[Surface01 Surface02].each do |surface|
+      source = File.join(STARTER_SOURCE, surface, "#{cue}.png")
+      abort "Starter picture is missing: #{source}" unless File.file?(source)
+
+      FileUtils.cp(source, File.join(cue_folder, "#{surface}.png"))
+    end
   end
   FileUtils.cp(File.join(ROOT, 'docs', 'USER_GUIDE.md'), File.join(folder, 'README.md'))
 

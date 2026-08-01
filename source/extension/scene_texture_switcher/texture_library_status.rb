@@ -7,7 +7,9 @@ module SceneTextureSwitcher
     extend self
 
     SUPPORTED_EXTENSIONS = %w[.png .jpg .jpeg].freeze
-    LIBRARY_NAME = /\Atextures(?:\s*[-\u2013\u2014].*)?\z/i
+    # The required part is only "textures". Everything after it is a user's
+    # project label and has no technical meaning.
+    LIBRARY_NAME = /\Atextures.*\z/i
     SURFACE_NAME = /\ASurface\d+\z/i
 
     def discover(project_dir, preferred_name = nil)
