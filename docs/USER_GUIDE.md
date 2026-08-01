@@ -113,4 +113,4 @@ Status colours are black for ready, red for incomplete, grey for missing and
 amber when files need attention. Hover the row to read the explanation.
 
 Scene TextureSwitch never resizes, repairs, deletes or overwrites your artwork.
-The simplest workflow is ordinary Finder copying, editing and replacing.
+The simplest workflow is ordinary file-browser copying, editing and replacing.

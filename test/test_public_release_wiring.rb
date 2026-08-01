@@ -42,4 +42,14 @@ class PublicReleaseWiringTest < Minitest::Test
     controller = File.read(File.join(ROOT, 'source', 'overview_preview', 'scene_texture_overview_preview', 'core.rb'))
     assert_includes controller, 'module SamMadwar::SceneTextureSwitch'
   end
+
+  def test_public_guide_uses_cross_platform_file_browser_wording
+    guide = File.read(File.join(ROOT, 'docs', 'USER_GUIDE.md'))
+    settings = File.read(File.join(ROOT, 'source', 'overview_preview', 'scene_texture_overview_preview', 'html', 'settings.html'))
+
+    refute_match(/Finder/i, guide)
+    refute_match(/Finder/i, settings)
+    assert_match(/file-browser/i, guide)
+    assert_match(/file-browser/i, settings)
+  end
 end
