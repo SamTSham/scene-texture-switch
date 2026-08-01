@@ -1,0 +1,30 @@
+Scene Texture Switcher — Read-Only Migration Preview
+========================================================
+Source: recovered SceneTextureSwitcher demo texture library
+Mode: READ ONLY — no files were copied, moved, renamed, or deleted.
+
+Controlled surfaces (2): Surface01, Surface02
+
+Texture states
+--------------
+01  READY       (scene label unavailable outside SketchUp)
+    Present: Surface01, Surface02
+    Missing: none
+02  READY       (scene label unavailable outside SketchUp)
+    Present: Surface01, Surface02
+    Missing: none
+03  READY       (scene label unavailable outside SketchUp)
+    Present: Surface01, Surface02
+    Missing: none
+
+Proposed file mapping
+---------------------
+Surface01/01.png  ->  01/Surface01.png
+Surface02/01.png  ->  01/Surface02.png
+Surface01/02.png  ->  02/Surface01.png
+Surface02/02.png  ->  02/Surface02.png
+Surface01/03.png  ->  03/Surface01.png
+Surface02/03.png  ->  03/Surface02.png
+
+No changes were made.
+
