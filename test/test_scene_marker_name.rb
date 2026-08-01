@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
-require_relative '../source/extension/scene_texture_switcher/scene_folder_name'
+require_relative '../source/extension/scene_texture_switcher/scene_marker_name'
 
-class SceneFolderNameTest < Minitest::Test
-  Naming = SceneTextureSwitcher::SceneFolderName
+class SceneMarkerNameTest < Minitest::Test
+  Naming = SceneTextureSwitcher::SceneMarkerName
 
   def test_plain_name_is_unchanged
     assert_equal 'Opening', Naming.sanitize('Opening')

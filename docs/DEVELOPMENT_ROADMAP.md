@@ -81,45 +81,49 @@ Where possible, safeguards will be added beside the existing code rather than by
 
 The plugin should feel the same as 1.0.0. The full starting-point test is repeated. Any behavioural difference blocks release.
 
-## Version 1.1.0 — scene-named texture folders
+## Version 1.1.0 — scene-first folders and visible labels
 
 This is the first important functional release.
 
-Instead of depending on an otherwise meaningless number list, texture storage becomes understandable through scene names.
+The original structure shows one surface across all its parallel scene states. Version 1.1 instead groups every controlled surface belonging to one scene state. Stable numeric folders avoid moving images when a scene is renamed; a lightweight `.txt` marker makes the scene name visible at a glance.
 
 Example:
 
 ```text
-textures/
-├── Opening/
+Textures — Project Name/
+├── 01/
+│   ├── Opening.txt
 │   ├── Surface01.png
 │   └── Surface02.png
-├── Kitchen - Evening/
+├── 02/
+│   ├── Kitchen - Evening.txt
 │   ├── Surface01.png
 │   └── Surface02.png
-└── Finale/
+└── 03/
+    ├── Finale.txt
     ├── Surface01.png
     └── Surface02.png
 ```
 
-The exact internal arrangement will be confirmed against real project needs before migration is enabled. The important feature is that the visible folders correspond to scene names.
+The number is the stable technical texture-state identity. `Surface##` remains the strict planned-media identifier. The marker filename is the disposable human-readable layer.
 
 Planned behaviour:
 
-- create a safe texture-folder name from the SketchUp scene name;
-- replace slashes, wildcards, and filesystem-forbidden characters safely;
-- handle duplicates as `Kitchen`, `Kitchen.2`, `Kitchen.3`;
-- remember the connection internally, even after a scene is renamed;
-- rename the texture folder when the corresponding scene is renamed;
-- stop and report a conflict rather than combining two folders;
-- preserve deleted-scene textures in `Orphaned Scenes`;
-- retain compatibility with the old numbered folder structure during migration.
+- discover `Textures` or `Textures — Project Name` beside the model;
+- group images by stable texture number and scene state;
+- retain strict `Surface01`, `Surface02`, and similar filenames;
+- generate a visible `.txt` marker from each SketchUp scene name;
+- sanitise slashes, wildcards, and forbidden marker characters;
+- update only the marker when a scene is renamed;
+- support several scenes sharing one texture number;
+- rebuild markers on command;
+- retain the original structure until a copied migration is verified.
 
 ### Migration principle
 
-The first test versions will **copy** or preview the proposed new structure. They will not immediately rename the only copy of working texture folders.
+The first test versions only preview the proposed mapping. Migration then copies into a separate library and never rearranges the only working textures.
 
-Only after the mapping is confirmed will the plugin offer a real migration. A migration report will record every old and new path.
+Only after the copied structure and markers are confirmed will the model adopt the new library. A migration report records every old and new path.
 
 ### Your test
 
@@ -129,9 +133,9 @@ You will receive a deliberately awkward test model containing:
 - duplicate scene names;
 - a scene containing `/`;
 - a scene containing wildcards;
-- renamed and deleted scenes.
+- renamed scenes and scenes sharing one texture number.
 
-You will confirm that the resulting folder names are understandable and that the correct textures still appear.
+You will confirm that the scene-oriented folders and marker names are understandable and that the correct textures still appear.
 
 ## Version 1.2.0 — compact texture overview
 
@@ -281,8 +285,7 @@ When technical information is needed, I will provide exact steps for copying it 
 
 1. Reconfirm public 1.0.0 in the original model.
 2. Complete safeguards for 1.0.1.
-3. Confirm the desired physical scene-folder layout with a realistic example.
-4. Build and test the scene-folder registry for 1.1.0.
+3. Confirm the numbered scene-folder and marker layout with a realistic example.
+4. Build a read-only migration preview and test marker generation for 1.1.0.
 5. Build the overview independently for 1.2.0.
 6. Use the result in a real production before choosing menu polish and convenience features.
-

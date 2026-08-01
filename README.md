@@ -25,28 +25,27 @@ The plain-language version plan is in `docs/DEVELOPMENT_ROADMAP.md`.
 ## First development milestone
 
 1. Confirm the imported v1.3 baseline in the existing `Texture-Test.skp` model.
-2. Integrate the tested scene-name folder service without changing switching behaviour.
-3. Add a persistent scene-to-folder registry.
+2. Build a read-only migration preview from surface-first to scene-first storage.
+3. Add regenerable scene-name marker files without changing image files.
 4. Add the compact status overview without modifying the switching engine.
 
 ## Planned user-facing behaviour
 
-Texture folders will be readable by scene name rather than dependent on a predetermined number:
+Textures will be grouped by stable scene-state number, with a visible marker filename providing the SketchUp scene name:
 
 ```text
-textures/
-  Opening/
-    Surface01/
-    Surface02/
-  Kitchen - Evening/
-    Surface01/
-    Surface02/
-  Finale/
-    Surface01/
-    Surface02/
+Textures — Project Name/
+├── 01/
+│   ├── Opening.txt
+│   ├── Surface01.png
+│   └── Surface02.png
+└── 02/
+    ├── Kitchen - Evening.txt
+    ├── Surface01.png
+    └── Surface02.png
 ```
 
-Unsafe filesystem characters are replaced deterministically. Duplicate scene names receive point suffixes such as `Kitchen`, `Kitchen.2`, and `Kitchen.3`, while an internal stable identifier keeps the association intact after renames.
+Unsafe marker characters are replaced deterministically. Renaming a scene updates only a tiny marker file; numeric folders and images remain in place.
 
 The overview will show every scene with a status:
 

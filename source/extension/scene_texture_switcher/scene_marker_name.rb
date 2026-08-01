@@ -3,7 +3,7 @@
 module SceneTextureSwitcher
   # Pure folder-name rules. This module does not touch SketchUp or the filesystem,
   # so it can be tested without loading the plugin.
-  module SceneFolderName
+  module SceneMarkerName
     extend self
 
     FALLBACK_NAME = 'Untitled Scene'

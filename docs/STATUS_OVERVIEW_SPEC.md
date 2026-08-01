@@ -10,7 +10,7 @@ Each row represents a scene and contains:
 
 - status indicator;
 - SketchUp scene name;
-- resolved texture-folder name when different;
+- stable texture number and marker label;
 - count of present and required surface textures;
 - current-scene marker.
 
@@ -52,4 +52,3 @@ Not in the first milestone:
 ## Isolation contract
 
 The overview receives a serializable snapshot from Ruby. Closing it, resizing it, or encountering a rendering error cannot unregister the observer or stop automatic switching.
-

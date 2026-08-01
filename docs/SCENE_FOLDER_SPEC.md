@@ -1,73 +1,115 @@
-# Scene-named texture folder specification
+# Scene-first texture structure and marker specification
 
-## Goals
+## Purpose
 
-- Make texture storage understandable without maintaining a separate numeric list.
-- Mirror SketchUp scene renames safely.
-- Preserve associations even if names collide or are sanitised.
-- Never delete user textures as an automatic consequence of a scene rename or deletion.
+The original layout groups images by surface. This is technically consistent but mentally backwards for scene design: it shows one surface across many parallel scene states instead of everything happening in one scene.
 
-## Identity model
+Version 1.1 changes the organisation without making scene names part of critical image paths.
 
-Each SketchUp scene receives a plugin-owned stable identifier stored in model attributes. A registry associates:
+## Target structure
 
 ```text
-scene stable ID -> current SketchUp scene identity -> current display name -> folder name
+Textures — Project Name/
+├── 01/
+│   ├── Opening.txt
+│   ├── Surface01.png
+│   ├── Surface02.png
+│   └── Surface03.jpg
+├── 02/
+│   ├── Hotel Room.txt
+│   ├── Surface01.png
+│   ├── Surface02.png
+│   └── Surface03.jpg
+└── 03/
+    ├── Finale.txt
+    ├── Surface01.png
+    ├── Surface02.png
+    └── Surface03.jpg
 ```
 
-The visible folder name is for humans; it is not the sole database key.
+The numbered folder is the stable technical address. `Surface##` remains the strict controlled-material identifier. The `.txt` marker is the human-readable scene label.
 
-## Sanitising rules
+## Texture-library discovery
 
-Starting with the scene display name:
+The plugin searches only beside the active `.skp` file. Compatible names are `Textures`, `Textures - Project`, `Textures – Project`, and `Textures — Project`.
 
-1. Normalize Unicode consistently.
-2. Replace `/` and `\\` with ` - ` so a scene cannot create unintended nested folders.
-3. Replace control characters and filesystem-reserved separators with a space or hyphen.
-4. Collapse repeated whitespace.
-5. Trim leading and trailing spaces and dots.
-6. Replace an empty result with `Untitled Scene`.
-7. Protect platform-reserved names where necessary.
-8. Limit the visible portion to a conservative length while retaining the full display name in metadata.
+1. Exactly one compatible folder: use it.
+2. No compatible folder: offer to create or select one.
+3. Several compatible folders: ask; never guess.
+4. Store the chosen relative folder and a stable library identity in the model.
+5. Copies and later model versions inherit that association.
 
-Examples:
+## Numeric scene-state folders
 
-| SketchUp scene name | Folder name |
-| --- | --- |
-| `Kitchen / Evening` | `Kitchen - Evening` |
-| `Act 1\\Scene 4` | `Act 1 - Scene 4` |
-| `  Finale  ` | `Finale` |
-| `...` | `Untitled Scene` |
+- Use `01`–`99` to retain the existing texture-number model.
+- Renaming a SketchUp scene never renames or moves the numeric folder.
+- Several scenes may intentionally share one number and texture state.
+- A missing numbered folder means that state has no prepared textures.
 
-Wildcards such as `*` and `?` are treated as literal user text and sanitised for cross-platform compatibility; they are never interpreted as matching instructions.
+## Marker files
 
-## Duplicate names
+Each numbered folder contains one marker for every SketchUp scene using that texture number. The filename is the useful information; its contents repeat the original scene name and number for Finder preview and recovery.
 
-The first scene uses the base folder name. Subsequent collisions use point suffixes:
+If two scenes share state `05`:
 
 ```text
-Kitchen
-Kitchen.2
-Kitchen.3
+05/
+├── Act 1 Kitchen.txt
+├── Act 2 Kitchen.txt
+├── Surface01.png
+└── Surface02.png
 ```
 
-Suffix allocation is stable. Reordering scenes does not renumber existing folders.
+Marker rules:
 
-## Rename behaviour
+1. Normalise Unicode consistently.
+2. Replace `/` and `\\` with ` - `.
+3. Replace wildcards, control characters, and forbidden filename characters safely.
+4. Trim leading/trailing spaces and dots.
+5. Use `Untitled Scene.txt` if no visible name remains.
+6. Add a point suffix only when sanitised markers collide.
+7. Regenerating markers never changes images.
 
-1. Detect that the scene display name changed.
-2. Resolve a new safe, unique folder name.
-3. Verify that source and destination are inside the configured texture root.
-4. If the destination is unused, rename atomically.
-5. If a conflicting external folder exists, stop and present a conflict; never merge silently.
-6. Update the registry only after the filesystem operation succeeds.
-7. If the folder is missing, update the expected name and show a missing status without disabling switching.
+## Scene rename behaviour
 
-## Deleted scenes
+1. Read the scene's assigned texture number.
+2. Calculate its new safe marker.
+3. Create the replacement marker.
+4. Remove the former marker only after the replacement exists.
+5. Do not rename the numeric folder or any image.
 
-Move their associated folder to a plugin-managed `Orphaned Scenes` location, preserving its stable identifier and former scene name. Permanent deletion is always a separate explicit action.
+A **Rebuild Scene Labels** command can recreate every marker from the SketchUp model.
 
-## External folder renames
+## Required surfaces and readiness
 
-An external rename is detected as a mismatch. The plugin offers to relink the folder or restore the expected name. It does not silently rename the SketchUp scene.
+Controlled materials retain strict names: `Surface01`, `Surface02`, and so on.
+
+- ready: every required `Surface##` image exists;
+- incomplete: at least one but not all exist;
+- missing: none exist;
+- conflict: duplicate extensions or another ambiguous condition needs attention.
+
+Extension precedence remains `.png`, `.jpg`, `.jpeg`.
+
+## Safe migration
+
+Migration is a preview and copy, never an in-place rearrangement of the only working library.
+
+```text
+OLD: Surface01/02.png  ->  NEW: 02/Surface01.png
+OLD: Surface02/02.jpg  ->  NEW: 02/Surface02.jpg
+```
+
+1. Scan without writing.
+2. Produce a complete proposed mapping and conflict report.
+3. Choose a new destination library.
+4. Copy; never move originals.
+5. Verify every copy by size and checksum.
+6. Generate scene markers.
+7. Test switching against the copy.
+8. Adopt it only after explicit confirmation.
+
+## Optional later refinement
+
+Names such as `02 — Hotel Room/` may be considered after version 1.1 has been used in production. They are not required for the scene-oriented system and introduce path changes the marker approach avoids.
 
