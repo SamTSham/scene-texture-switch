@@ -31,7 +31,25 @@ Useful information:
 
 ### 2. Thumbnail view
 
-The published README proposed a visual thumbnail grid. This remains one of the strongest later features because textures are visual assets.
+Implemented for public version 1.0.0: texture-state thumbnails, per-surface
+tiles, click-to-inspect, and the `z` large-preview shortcut.
+
+#### Post-1.0 transparency refinement
+
+Consider for the next full version:
+
+- replace the current opaque dark preview background with a neutral
+  checkerboard behind PNG images;
+- use the same treatment in thumbnails and the large preview;
+- preserve the PNG alpha channel rather than altering or flattening files;
+- verify appearance and contrast on both macOS and Windows;
+- keep the implementation entirely inside the existing HTML/CSS preview so it
+  does not depend on Finder, Explorer, or another operating-system viewer.
+
+This is visual clarification rather than a change to texture switching or file
+handling, and is intentionally excluded from the frozen public 1.0.0 release.
+
+The original thumbnail considerations were:
 
 Potential forms:
 
@@ -190,4 +208,3 @@ Rejected. Status means:
 ### Treat WebDialog/HtmlDialog failure as proof HTML is impossible
 
 Rejected conclusion. The historic failures mixed interface experiments with damaged core code. A small isolated HtmlDialog remains appropriate for lists and thumbnails after controlled testing.
-
