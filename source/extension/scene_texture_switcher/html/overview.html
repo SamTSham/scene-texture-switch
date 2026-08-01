@@ -515,14 +515,37 @@
           previewGrid.appendChild(tile);
         });
 
+        previewCard.style.width = '';
+        previewCard.style.maxHeight = '';
         previewCard.hidden = false;
         const anchorRect = anchor.getBoundingClientRect();
         const cardRect = previewCard.getBoundingClientRect();
-        const left = Math.max(6, Math.min(window.innerWidth - cardRect.width - 6, anchorRect.right - cardRect.width));
         const below = anchorRect.bottom + 4;
-        const top = below + cardRect.height <= window.innerHeight - 6
-          ? below
-          : Math.max(6, anchorRect.top - cardRect.height - 4);
+        const above = anchorRect.top - cardRect.height - 4;
+        let left;
+        let top;
+
+        if (below + cardRect.height <= window.innerHeight - 6) {
+          left = Math.max(6, Math.min(window.innerWidth - cardRect.width - 6, anchorRect.right - cardRect.width));
+          top = below;
+        } else if (above >= 6) {
+          left = Math.max(6, Math.min(window.innerWidth - cardRect.width - 6, anchorRect.right - cardRect.width));
+          top = above;
+        } else {
+          // A short palette may have room neither above nor below. Keep the
+          // cue button clear by placing a narrower preview beside it.
+          const roomLeft = anchorRect.left - 10;
+          const roomRight = window.innerWidth - anchorRect.right - 10;
+          const useLeft = roomLeft >= roomRight;
+          const sideRoom = Math.max(roomLeft, roomRight);
+          const sideWidth = Math.max(120, Math.min(270, sideRoom));
+          previewCard.style.width = `${sideWidth}px`;
+          const sideRect = previewCard.getBoundingClientRect();
+          left = useLeft ? anchorRect.left - sideRect.width - 4 : anchorRect.right + 4;
+          left = Math.max(6, Math.min(window.innerWidth - sideRect.width - 6, left));
+          top = Math.max(6, Math.min(window.innerHeight - sideRect.height - 6,
+            anchorRect.top + (anchorRect.height - sideRect.height) / 2));
+        }
         previewCard.style.left = `${left}px`;
         previewCard.style.top = `${top}px`;
       }

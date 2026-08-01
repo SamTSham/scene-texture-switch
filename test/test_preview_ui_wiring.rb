@@ -16,6 +16,8 @@ class PreviewUiWiringTest < Minitest::Test
     assert_includes source, 'window.sketchup.previewShortcut'
     assert_includes source, 'surfaceShortDisplay'
     assert_includes source, "surface.replace(/^Surface/i, 'S')"
+    assert_includes source, 'const roomLeft = anchorRect.left - 10'
+    assert_includes source, 'anchorRect.left - sideRect.width - 4'
     refute_includes source, 'deduplicate'
   end
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0-rc.8
+
+- Prevented thumbnail previews from covering their texture-number button when
+  the palette has insufficient room above or below the row.
+- In constrained palettes, the preview now opens beside the number and narrows
+  only as much as necessary.
+
 ## 1.2.0-rc.7
 
 - Replaced the illustrated setup screenshots with compact, purpose-sized PNGs.
