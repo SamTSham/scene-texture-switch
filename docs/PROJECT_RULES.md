@@ -33,3 +33,7 @@ A build cannot be labelled usable unless all of the following are confirmed:
 - missing textures are reported without disabling future switching;
 - saved scene-folder associations survive restart;
 - the status overview can fail or close without stopping automatic switching.
+
+## Visual planning
+
+Interface and layout decisions must be supported by real visual mockups when spatial understanding matters. Use quick generated mockups for concept discussion and rendered HTML/CSS for exact design review. Do not use ASCII boxes as interface previews.
