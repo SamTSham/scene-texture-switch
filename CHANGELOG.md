@@ -10,3 +10,4 @@
 - Imported and checksum-locked the published v1.3 RBZ.
 - Added an isolated scene-folder sanitiser with point-suffix duplicate handling.
 - Added automated tests for unsafe characters, reserved names, duplicates, and length limits.
+- Recorded the distinction between internal build v1.3 and intended public release v1.0.0.

@@ -13,6 +13,10 @@ Import record:
 - Archive date: 28 May 2025
 - Historical working environment: SketchUp 2024 on macOS
 
+## Version interpretation
+
+`v1.3` identifies the internal development/release-candidate lineage of the preserved archive. The loader's `1.0.0` is intentional: it was meant to be the first public-facing release number, leaving a conventional sequence for later published updates. The README's older `v1.1` heading is documentation drift and is not used for package identity.
+
 Archive manifest:
 
 ```text

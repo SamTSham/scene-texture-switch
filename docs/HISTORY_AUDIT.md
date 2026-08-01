@@ -10,6 +10,8 @@ The revived ChatGPT history identifies the published v1.3 package as the last tr
 - stable loading and menu registration;
 - the original selector.
 
+The archive name `v1.3` represents its internal development lineage. Its loader version `1.0.0` was deliberately reserved as the first public release number. These two version tracks should remain distinct.
+
 ## Desired but unfinished organisation feature
 
 The attempted selector enhancement classified a texture number by checking every existing `Surface##` folder:
@@ -39,4 +41,3 @@ The historical claims that WebDialog or HTML was categorically incapable were no
 ## Consequence for current work
 
 The interface will be tested as a disposable shell against a read-only fixture before it is connected to v1.3. The canonical switching engine will not be modified to make a selector render.
-
