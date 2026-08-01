@@ -38,6 +38,8 @@ Later attempts repeatedly reconstructed rather than patched the plugin. Reported
 
 The historical claims that WebDialog or HTML was categorically incapable were not established by controlled tests. Several failed packages also omitted unrelated core code, so interface failure and package regression were confounded.
 
+A later forensic comparison confirmed this. Two v1.4v packages preserved the baseline engine but combined correct and incorrect path calculations, repeated readiness scans, duplicate callback registration, and incompatible data-transfer attempts. The build labelled `iconlogic_stable` was a full rewrite that removed scene polling and texture application entirely. See `FORENSIC_REVIEW_V1_4.md`.
+
 ## Consequence for current work
 
 The interface will be tested as a disposable shell against a read-only fixture before it is connected to v1.3. The canonical switching engine will not be modified to make a selector render.

@@ -11,3 +11,4 @@
 - Added an isolated scene-folder sanitiser with point-suffix duplicate handling.
 - Added automated tests for unsafe characters, reserved names, duplicates, and length limits.
 - Recorded the distinction between internal build v1.3 and intended public release v1.0.0.
+- Forensically reviewed three marked v1.4 experiments and documented reusable requirements and rejected code paths.
