@@ -1,0 +1,12 @@
+SCENE TEXTURESWITCH — QUICKEST TEST
+
+Keep Texture-Test.skp and the complete "textures - Starter" folder together.
+
+Open Texture-Test.skp and change between its three SketchUp scenes. The two
+example surfaces should change pictures immediately.
+
+The numbered folders are picture sets. Surface01.png and Surface02.png are the
+two controlled SketchUp materials.
+
+You may test this supplied copy directly. For your own experiments, copy this
+complete starter folder to an ordinary project location first.

@@ -19,7 +19,7 @@ module SceneTextureSwitcher
   module OverviewPreview
     extend self
 
-    VERSION = '1.2.0-rc.8'
+    VERSION = '1.2.0-rc.9'
 
     def activate
       if @dialog && @dialog.visible?
@@ -276,7 +276,7 @@ module SceneTextureSwitcher
     end
 
     def reveal_starter
-      folder = File.join(__dir__, 'starter', 'textures - Starter')
+      folder = File.join(__dir__, 'starter')
       return UI.messagebox('The supplied starter folder is missing from this installation.') unless Dir.exist?(folder)
 
       UI.openURL(PreviewAssets.file_url(folder))

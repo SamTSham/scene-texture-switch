@@ -4,7 +4,7 @@ require 'fileutils'
 require 'tmpdir'
 
 ROOT = File.expand_path('..', __dir__)
-VERSION = '1.2.0-rc.8'
+VERSION = '1.2.0-rc.9'
 OUTPUT = ARGV[0] || File.join(ROOT, 'builds', "SceneTextureSwitch_#{VERSION}.rbz")
 PREVIEW_SOURCE = File.join(ROOT, 'source', 'overview_preview')
 SHARED_SOURCE = File.join(ROOT, 'source', 'extension', 'scene_texture_switcher')
@@ -52,6 +52,9 @@ Dir.mktmpdir('scene-textures-release') do |stage|
       FileUtils.cp(source, File.join(cue_folder, "#{surface}.png"))
     end
   end
+  example = File.join(ROOT, 'assets', 'example')
+  FileUtils.cp(File.join(example, 'Texture-Test.skp'), File.dirname(starter))
+  FileUtils.cp(File.join(example, 'START HERE - Example.txt'), File.dirname(starter))
   FileUtils.cp(File.join(ROOT, 'docs', 'USER_GUIDE.md'), File.join(folder, 'README.md'))
   guide = File.join(folder, 'guide')
   FileUtils.mkdir_p(guide)

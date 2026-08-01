@@ -37,6 +37,11 @@ orientation.
 
 ## Three-minute setup
 
+**Fastest test:** In **Settings + Quick Guide**, click **Show supplied starter
+folder**. Open `Texture-Test.skp` beside its supplied `textures - Starter`
+folder, then change between its three scenes. The pictures should switch
+immediately.
+
 1. Save the SketchUp model.
 2. Put the supplied starter texture folder beside the `.skp` file.
 3. Name controlled SketchUp materials `Surface01`, `Surface02`, and so on.

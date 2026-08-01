@@ -9,7 +9,7 @@ class UnifiedReleaseWiringTest < Minitest::Test
     source = File.read(File.join(ROOT, 'source', 'extension', 'SceneTextureSwitcher.rb'))
 
     assert_includes source, "SketchupExtension.new('Scene TextureSwitch', 'scene_texture_overview_preview/core')"
-    assert_includes source, "PLUGIN.version     = '1.2.0-rc.8'"
+    assert_includes source, "PLUGIN.version     = '1.2.0-rc.9'"
   end
 
   def test_former_companion_loader_is_a_retirement_shim
@@ -47,5 +47,7 @@ class UnifiedReleaseWiringTest < Minitest::Test
     assert_includes source, 'Surface01'
     assert_includes source, '_PICTURE SET'
     assert_includes source, "File.join(ROOT, 'assets', 'guide')"
+    assert_includes source, "File.join(ROOT, 'assets', 'example')"
+    assert_includes source, 'Texture-Test.skp'
   end
 end

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0-rc.9
+
+- Added the minimal `Texture-Test.skp` example beside its matching starter
+  texture folder.
+- Changed **Show supplied starter folder** to reveal the complete example
+  package rather than opening inside the texture folder.
+- Added a quickest-test explanation to both guides.
+
 ## 1.2.0-rc.8
 
 - Prevented thumbnail previews from covering their texture-number button when
