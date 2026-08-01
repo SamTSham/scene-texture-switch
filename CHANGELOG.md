@@ -32,3 +32,5 @@
   reducing row height while retaining selected-row details in the footer.
 - Replaced the generic texture-folder label in `dev.6` with a compact colour
   legend and contextual hover guidance.
+- Made the reload arrow reapply current-scene images from disk and added
+  deliberate row double-click scene activation in `dev.7`.

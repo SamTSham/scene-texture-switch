@@ -61,8 +61,14 @@ module SceneTextureSwitcher
       @overview_dialog.add_action_callback('requestSnapshot') do |_action_context|
         refresh_overview(@overview_dialog)
       end
+      @overview_dialog.add_action_callback('reloadCurrent') do |_action_context|
+        reload_current_scene_textures
+      end
       @overview_dialog.add_action_callback('setCue') do |_action_context, scene_key, cue|
         assign_overview_cue(scene_key, cue)
+      end
+      @overview_dialog.add_action_callback('activateScene') do |_action_context, scene_key|
+        activate_overview_scene(scene_key)
       end
       @overview_dialog.set_on_closed do
         detach_overview_pages_observer
@@ -93,6 +99,24 @@ module SceneTextureSwitcher
 
       apply_all_textures(result[:cue]) if result[:current]
       refresh_overview(@overview_dialog)
+    end
+
+    def reload_current_scene_textures
+      scene = Sketchup.active_model.pages.selected_page
+      if scene
+        cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
+        apply_all_textures(TextureLibraryStatus.normalize_cue(cue))
+      end
+      refresh_overview(@overview_dialog)
+    end
+
+    def activate_overview_scene(scene_key)
+      model = Sketchup.active_model
+      page = SceneAssignment.find_page(model.pages, scene_key)
+      return unless page
+
+      model.pages.selected_page = page unless page.equal?(model.pages.selected_page)
+      schedule_refresh
     end
 
     def schedule_refresh

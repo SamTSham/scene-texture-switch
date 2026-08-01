@@ -271,7 +271,7 @@
   <div class="app">
     <div class="library">
       <span class="library-name" id="library">Reading texture library…</span>
-      <button type="button" class="refresh" id="refresh" title="Rescan scenes and texture files" aria-label="Rescan scenes and texture files">&#x21bb;</button>
+      <button type="button" class="refresh" id="refresh" title="Reload current scene textures from disk" aria-label="Reload current scene textures from disk">&#x21bb;</button>
     </div>
     <main class="rows" id="rows"></main>
     <footer>
@@ -370,12 +370,16 @@
               rowsElement.querySelectorAll('.row').forEach((item) => item.classList.toggle('selected', item === row));
               summaryElement.textContent = `${scene.scene_name}: ${detailFor(scene)}`;
             });
+            row.addEventListener('dblclick', () => {
+              if (window.sketchup) window.sketchup.activateScene(scene.scene_key);
+            });
             row.addEventListener('mouseenter', () => temporaryGuide(`${labels[scene.status] || scene.status}: ${detailFor(scene)}`));
             row.addEventListener('mouseleave', () => defaultGuide(currentData.library));
             row.querySelector('.cue').addEventListener('click', (event) => {
               event.stopPropagation();
               openPicker(scene);
             });
+            row.querySelector('.cue').addEventListener('dblclick', (event) => event.stopPropagation());
             row.querySelector('.cue').addEventListener('mouseenter', (event) => {
               event.stopPropagation();
               temporaryGuide(`Click to assign a texture state to ${scene.scene_name}`);
@@ -470,7 +474,7 @@
 
       window.SceneTextureOverview = { render };
       document.getElementById('pickerClose').addEventListener('click', closePicker);
-      document.getElementById('refresh').addEventListener('mouseenter', () => temporaryGuide('Rescan scenes, assignments, and texture files'));
+      document.getElementById('refresh').addEventListener('mouseenter', () => temporaryGuide('Reload current scene textures after editing image files'));
       document.getElementById('refresh').addEventListener('mouseleave', () => {
         if (currentData) defaultGuide(currentData.library);
       });
@@ -481,7 +485,7 @@
         if (event.key === 'Escape') closePicker();
       });
       document.getElementById('refresh').addEventListener('click', () => {
-        if (window.sketchup) window.sketchup.requestSnapshot();
+        if (window.sketchup) window.sketchup.reloadCurrent();
       });
       window.addEventListener('load', () => {
         if (window.sketchup) {

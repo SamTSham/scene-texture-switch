@@ -111,3 +111,18 @@ folder name `textures`. It normally shows the four status colours. Hovering a
 scene row, texture-number control, or rescan button temporarily replaces the
 legend with a concise explanation. Missing or ambiguous library warnings take
 priority over the ordinary legend.
+
+### dev.7 explicit reload and optional scene navigation
+
+The circular arrow now has one concrete production purpose: it reapplies the
+current scene's assigned textures from disk, then refreshes all readiness data.
+This is useful after replacing an image in Photoshop without switching away and
+back. Selecting the already-current SketchUp scene tab does not change the
+legacy poller's scene-name state and therefore is not a dependable reload.
+
+Scene rows gain an explicit double-click action:
+
+- single click selects the row and shows details;
+- double click activates that SketchUp scene;
+- clicking or double-clicking the texture-number button never activates the
+  scene.

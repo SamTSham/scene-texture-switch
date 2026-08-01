@@ -34,8 +34,14 @@ module SceneTextureSwitcher
       @dialog.add_action_callback('requestSnapshot') do |_action_context|
         refresh(@dialog)
       end
+      @dialog.add_action_callback('reloadCurrent') do |_action_context|
+        reload_current_scene_textures
+      end
       @dialog.add_action_callback('setCue') do |_action_context, scene_key, cue|
         assign_cue(scene_key, cue)
+      end
+      @dialog.add_action_callback('activateScene') do |_action_context, scene_key|
+        activate_scene(scene_key)
       end
       @dialog.set_on_closed do
         detach_pages_observer
@@ -74,6 +80,24 @@ module SceneTextureSwitcher
       else
         puts '[SceneTextureOverview] Assignment saved; production switcher is unavailable for immediate application.'
       end
+    end
+
+    def reload_current_scene_textures
+      scene = Sketchup.active_model.pages.selected_page
+      if scene
+        cue = scene.get_attribute('SceneTextureSwitcher', 'texture_index', '01')
+        apply_current_texture(TextureLibraryStatus.normalize_cue(cue))
+      end
+      refresh(@dialog)
+    end
+
+    def activate_scene(scene_key)
+      model = Sketchup.active_model
+      page = SceneAssignment.find_page(model.pages, scene_key)
+      return unless page
+
+      model.pages.selected_page = page unless page.equal?(model.pages.selected_page)
+      schedule_refresh
     end
 
     def schedule_refresh
