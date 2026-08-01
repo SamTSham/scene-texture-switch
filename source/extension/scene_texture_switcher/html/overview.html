@@ -383,8 +383,11 @@
         if (scene.status === 'ready') return 'All required textures present';
         if (scene.status === 'incomplete') return `Missing: ${scene.missing_surfaces.map(surfaceDisplay).join(', ')}`;
         if (scene.status === 'conflict') {
-          const conflict = scene.conflicts && scene.conflicts.find((item) => item.message);
-          return conflict ? conflict.message : 'Texture library needs attention';
+          const details = (scene.conflicts || []).map((item) => item.message).filter(Boolean);
+          if (scene.missing_surfaces && scene.missing_surfaces.length) {
+            details.push(`Missing: ${scene.missing_surfaces.map(surfaceDisplay).join(', ')}`);
+          }
+          return details.length ? details.join(' · ') : 'Texture library needs attention';
         }
         return scene.required_count ? 'No textures prepared' : 'Surface folders unavailable';
       }
@@ -436,7 +439,7 @@
             const row = document.createElement('div');
             row.className = `row${scene.current ? ' current' : ''}${selectedKey === scene.scene_key ? ' selected' : ''}`;
             row.dataset.sceneKey = scene.scene_key;
-            row.title = `${scene.scene_name} — ${labels[scene.status] || scene.status}`;
+            row.title = `${scene.scene_name} — ${detailFor(scene)}`;
             row.innerHTML = `
               <span class="dot ${escapeText(scene.status)}" aria-label="${escapeText(labels[scene.status] || scene.status)}"></span>
               <span class="scene">

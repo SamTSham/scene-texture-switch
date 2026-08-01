@@ -21,6 +21,14 @@ class PreviewUiWiringTest < Minitest::Test
     refute_includes source, 'deduplicate'
   end
 
+  def test_conflict_hover_explains_every_recorded_problem
+    source = File.read(File.join(ROOT, 'source', 'extension', 'scene_texture_switcher', 'html', 'overview.html'))
+
+    assert_includes source, '(scene.conflicts || []).map((item) => item.message).filter(Boolean)'
+    assert_includes source, "details.join(' · ')"
+    assert_includes source, 'row.title = `${scene.scene_name} — ${detailFor(scene)}`'
+  end
+
   def test_large_preview_rejects_paths_outside_associated_library
     source = File.read(File.join(ROOT, 'source', 'overview_preview', 'scene_texture_overview_preview', 'core.rb'))
 

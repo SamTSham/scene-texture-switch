@@ -97,7 +97,7 @@ module SamMadwar::SceneTextureSwitch
           missing << surface
         else
           present << surface
-          conflicts << { surface: surface, files: matches } if matches.length > 1
+          conflicts << alternative_files_conflict(surface, matches) if matches.length > 1
         end
       end
 
@@ -193,7 +193,7 @@ module SamMadwar::SceneTextureSwitch
           missing << surface
         else
           present << surface
-          conflicts << { surface: surface, files: matches } if matches.length > 1
+          conflicts << alternative_files_conflict(surface, matches) if matches.length > 1
         end
       end
 
@@ -216,6 +216,17 @@ module SamMadwar::SceneTextureSwitch
 
     def missing_discovery
       { status: :missing, root: nil, candidates: [] }
+    end
+
+    def alternative_files_conflict(surface, matches)
+      filenames = matches.map { |path| File.basename(path) }
+      {
+        type: :multiple_picture_files,
+        surface: surface,
+        files: matches,
+        preferred: matches.first,
+        message: "#{surface}: #{filenames.join(', ')} are all present; #{filenames.first} is used."
+      }
     end
 
     def no_surfaces_state(cue)

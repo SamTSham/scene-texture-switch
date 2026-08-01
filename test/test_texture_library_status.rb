@@ -51,7 +51,10 @@ class TextureLibraryStatusTest < Minitest::Test
       assert_equal :ready, Status.legacy_state(root, '01')[:status]
       assert_equal :incomplete, Status.legacy_state(root, '02')[:status]
       assert_equal :missing, Status.legacy_state(root, '03')[:status]
-      assert_equal :conflict, Status.legacy_state(root, '04')[:status]
+      conflict_state = Status.legacy_state(root, '04')
+      assert_equal :conflict, conflict_state[:status]
+      assert_includes conflict_state[:conflicts].first[:message], '04.png, 04.jpg'
+      assert_includes conflict_state[:conflicts].first[:message], '04.png is used'
       assert_equal ['Surface02'], Status.legacy_state(root, '02')[:missing]
     end
   end
@@ -100,8 +103,11 @@ class TextureLibraryStatusTest < Minitest::Test
 
       assert_equal :scene_first, Status.layout(root)
       assert_equal :ready, Status.state(root, '01')[:status]
-      assert_equal :conflict, Status.state(root, '02')[:status]
-      assert_equal ['Surface02'], Status.state(root, '02')[:missing]
+      conflict_state = Status.state(root, '02')
+      assert_equal :conflict, conflict_state[:status]
+      assert_equal ['Surface02'], conflict_state[:missing]
+      assert_includes conflict_state[:conflicts].first[:message], 'Surface01.png, Surface01.jpg'
+      assert_includes conflict_state[:conflicts].first[:message], 'Surface01.png is used'
     end
   end
 
