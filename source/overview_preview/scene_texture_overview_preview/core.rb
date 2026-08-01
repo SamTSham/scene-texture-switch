@@ -59,6 +59,9 @@ module SceneTextureSwitcher
       @dialog.add_action_callback('previewShortcut') do |_action_context, path, label|
         toggle_large_preview(path, label)
       end
+      @dialog.add_action_callback('revealLibrary') do |_action_context|
+        reveal_library
+      end
       @dialog.set_on_closed do
         detach_pages_observer
         @dialog = nil
@@ -199,6 +202,15 @@ module SceneTextureSwitcher
 
       preferred = LibraryAssociation.folder_name(model)
       TextureLibraryStatus.discover(File.dirname(model.path), preferred)[:root]
+    end
+
+    def reveal_library
+      root = current_library_root
+      return UI.messagebox('No texture library is associated with this model.') unless root
+
+      UI.openURL(PreviewAssets.file_url(root))
+    rescue StandardError => error
+      UI.messagebox("The texture folder could not be opened.\n\n#{error.message}")
     end
 
     def migrate_scene_first_copy

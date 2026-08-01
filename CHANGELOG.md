@@ -44,3 +44,5 @@
 - Made the `z` preview shortcut close the currently open preview before opening
   another, clarified the lowercase shortcut hint, and added relative path,
   pixel dimensions, and file size to the large preview in `dev.11`.
+- Added a compact cross-platform texture-folder reveal control and amber
+  per-surface pixel-dimension consistency warnings in `dev.12`.

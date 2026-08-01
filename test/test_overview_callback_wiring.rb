@@ -18,4 +18,14 @@ class OverviewCallbackWiringTest < Minitest::Test
     assert_includes source, "refresh_overview(@overview_dialog)"
     refute_match(/requestSnapshot.*do \|dialog,/m, source)
   end
+
+  def test_reveal_control_opens_only_the_library_root
+    core = File.read(File.join(ROOT, 'source', 'overview_preview', 'scene_texture_overview_preview', 'core.rb'))
+    html = File.read(File.join(ROOT, 'source', 'extension', 'scene_texture_switcher', 'html', 'overview.html'))
+
+    assert_includes core, "add_action_callback('revealLibrary')"
+    assert_includes core, 'UI.openURL(PreviewAssets.file_url(root))'
+    assert_includes html, "temporaryGuide('Reveal texture library')"
+    assert_includes html, 'window.sketchup.revealLibrary()'
+  end
 end

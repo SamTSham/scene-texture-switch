@@ -58,4 +58,24 @@ class SceneSnapshotTest < Minitest::Test
     assert_equal 'conflict', result[:scenes].first[:status]
     assert_equal 1, result[:summary][:conflict]
   end
+
+  def test_dimension_warning_marks_only_the_outlying_state
+    assets = {
+      '01' => [{ surface: 'Surface01', width: 1024, height: 512 }],
+      '02' => [{ surface: 'Surface01', width: 1024, height: 512 }],
+      '03' => [{ surface: 'Surface01', width: 1024, height: 1024 }]
+    }
+    provider = lambda do |_root, cue|
+      assets.fetch(cue, [])
+    end
+
+    SceneTextureSwitcher::PreviewAssets.stub(:for_state, provider) do
+      warnings = Snapshot.send(:dimension_warnings, '/textures')
+
+      assert_empty warnings['01']
+      assert_empty warnings['02']
+      assert_equal :dimension_mismatch, warnings['03'].first[:type]
+      assert_includes warnings['03'].first[:message], '1024 × 1024 px'
+    end
+  end
 end

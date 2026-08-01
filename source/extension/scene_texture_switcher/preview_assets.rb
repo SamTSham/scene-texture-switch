@@ -12,7 +12,11 @@ module SceneTextureSwitcher
         path = TextureApplier.preferred_texture(root, layout, surface, TextureLibraryStatus.normalize_cue(cue))
         next unless path
 
-        { surface: surface, path: path, url: file_url(path), filename: File.basename(path) }
+        dimensions = image_dimensions(path)
+        {
+          surface: surface, path: path, url: file_url(path), filename: File.basename(path),
+          width: dimensions && dimensions[0], height: dimensions && dimensions[1]
+        }
       end.compact
     end
 
@@ -46,8 +50,6 @@ module SceneTextureSwitcher
       { relative_path: File.basename(path.to_s), summary: 'File information unavailable' }
     end
 
-    private
-
     def image_dimensions(path)
       return nil unless defined?(Sketchup::ImageRep)
 
@@ -57,6 +59,8 @@ module SceneTextureSwitcher
     rescue StandardError
       nil
     end
+
+    private
 
     def human_size(bytes)
       return "#{bytes} B" if bytes < 1024
