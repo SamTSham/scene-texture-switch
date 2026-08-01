@@ -39,3 +39,5 @@
   `dev.8`.
 - Added continuous create-before-remove scene marker synchronisation and
   numbered marker filenames in `dev.9`.
+- Preserved cue-matched working files silently during migration and added
+  literal hover/large texture previews in `dev.10`.

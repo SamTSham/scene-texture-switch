@@ -35,8 +35,6 @@ module SceneTextureSwitcher
       append_issues(lines, 'Conflicts', @plan[:conflicts])
       append_issues(lines, 'Warnings', @plan[:warnings])
       append_issues(lines, 'Errors', @plan[:errors])
-      append_issues(lines, 'Ignored files', @plan[:ignored])
-
       lines << ''
       lines << 'No changes were made.'
       lines.join("\n") + "\n"
@@ -64,4 +62,3 @@ module SceneTextureSwitcher
     end
   end
 end
-

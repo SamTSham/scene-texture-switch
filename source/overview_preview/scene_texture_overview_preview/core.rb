@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'cgi'
 require File.join(__dir__, 'texture_library_status')
 require File.join(__dir__, 'scene_snapshot')
 require File.join(__dir__, 'overview_pages_observer')
@@ -10,6 +11,7 @@ require File.join(__dir__, 'texture_applier')
 require File.join(__dir__, 'scene_first_bridge')
 require File.join(__dir__, 'scene_marker_name')
 require File.join(__dir__, 'scene_marker_sync')
+require File.join(__dir__, 'preview_assets')
 require File.join(__dir__, 'legacy_library_scanner')
 require File.join(__dir__, 'migration_planner')
 require File.join(__dir__, 'verified_scene_first_migration')
@@ -50,6 +52,9 @@ module SceneTextureSwitcher
       end
       @dialog.add_action_callback('activateScene') do |_action_context, scene_key|
         activate_scene(scene_key)
+      end
+      @dialog.add_action_callback('zoomPreview') do |_action_context, path, label|
+        show_large_preview(path, label)
       end
       @dialog.set_on_closed do
         detach_pages_observer
@@ -120,6 +125,64 @@ module SceneTextureSwitcher
 
       model.pages.selected_page = page unless page.equal?(model.pages.selected_page)
       schedule_refresh
+    end
+
+    def show_large_preview(path, label)
+      root = current_library_root
+      return unless PreviewAssets.allowed_path?(root, path)
+
+      if @large_preview && @large_preview.visible? && @large_preview_path == path
+        @large_preview.close
+        return
+      end
+      @large_preview.close if @large_preview && @large_preview.visible?
+
+      @large_preview_path = path
+      @large_preview = UI::HtmlDialog.new({
+        :dialog_title => "Texture Preview — #{label}",
+        :preferences_key => 'SceneTextureLargePreview',
+        :scrollable => false,
+        :resizable => true,
+        :width => 900,
+        :height => 700,
+        :min_width => 420,
+        :min_height => 320,
+        :style => UI::HtmlDialog::STYLE_DIALOG
+      })
+      @large_preview.set_html(large_preview_html(path, label))
+      @large_preview.add_action_callback('closePreview') do |_action_context|
+        @large_preview.close if @large_preview
+      end
+      @large_preview.set_on_closed do
+        @large_preview = nil
+        @large_preview_path = nil
+      end
+      @large_preview.show
+    end
+
+    def large_preview_html(path, label)
+      url = CGI.escapeHTML(PreviewAssets.file_url(path))
+      title = CGI.escapeHTML(label.to_s)
+      <<~HTML
+        <!doctype html><html><head><meta charset="utf-8"><style>
+        html,body{height:100%;margin:0;background:#181818;color:#eee;font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+        body{display:grid;grid-template-rows:minmax(0,1fr) 28px}
+        main{display:grid;place-items:center;min-height:0;padding:10px}
+        img{display:block;max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 2px 18px rgba(0,0,0,.45)}
+        footer{display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:#242424;color:#bbb}
+        </style></head><body><main><img src="#{url}" alt="#{title}"></main>
+        <footer><span>#{title}</span><span>Z or Escape — close</span></footer>
+        <script>document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key.toLowerCase()==='z'){e.preventDefault();window.sketchup.closePreview();}});</script>
+        </body></html>
+      HTML
+    end
+
+    def current_library_root
+      model = Sketchup.active_model
+      return nil if model.path.to_s.empty?
+
+      preferred = LibraryAssociation.folder_name(model)
+      TextureLibraryStatus.discover(File.dirname(model.path), preferred)[:root]
     end
 
     def migrate_scene_first_copy

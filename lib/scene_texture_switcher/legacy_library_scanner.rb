@@ -6,6 +6,7 @@ module SceneTextureSwitcher
     SUPPORTED_EXTENSIONS = %w[.png .jpg .jpeg].freeze
     SURFACE_PATTERN = /\ASurface\d+\z/i
     TEXTURE_PATTERN = /\A(\d{1,2})(\.(?:png|jpg|jpeg))\z/i
+    SUPPORTING_PATTERN = /\A(\d{1,2})(\.[^.]+)\z/i
 
     def initialize(texture_root)
       @texture_root = File.expand_path(texture_root.to_s)
@@ -36,6 +37,7 @@ module SceneTextureSwitcher
         surfaces: [],
         cues: {},
         files: [],
+        supporting_files: [],
         conflicts: [],
         ignored: [],
         warnings: [],
@@ -57,6 +59,18 @@ module SceneTextureSwitcher
 
         match = filename.match(TEXTURE_PATTERN)
         unless match
+          supporting_match = filename.match(SUPPORTING_PATTERN)
+          if supporting_match
+            result[:supporting_files] << {
+              cue: format('%02d', supporting_match[1].to_i),
+              surface: surface,
+              extension: supporting_match[2].downcase,
+              source: path,
+              source_relative: relative(path),
+              size: File.size(path)
+            }
+            next
+          end
           result[:ignored] << relative(path)
           next
         end
@@ -110,6 +124,7 @@ module SceneTextureSwitcher
       end
 
       result[:files].sort_by! { |record| [record[:cue], record[:surface], record[:extension]] }
+      result[:supporting_files].sort_by! { |record| [record[:cue], record[:surface], record[:extension]] }
       result[:cues] = result[:cues].sort.to_h
       result
     end
@@ -119,4 +134,3 @@ module SceneTextureSwitcher
     end
   end
 end
-

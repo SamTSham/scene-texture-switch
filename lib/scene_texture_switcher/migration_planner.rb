@@ -23,6 +23,20 @@ module SceneTextureSwitcher
         }
       end
 
+      supporting_mappings = Array(@scan_result[:supporting_files]).map do |record|
+        {
+          source: record[:source],
+          source_relative: record[:source_relative],
+          destination_relative: File.join(record[:cue], "#{record[:surface]}#{record[:extension]}"),
+          cue: record[:cue],
+          surface: record[:surface],
+          extension: record[:extension],
+          size: record[:size],
+          supporting: true
+        }
+      end
+      mappings.concat(supporting_mappings)
+
       destination_groups = mappings.group_by { |mapping| mapping[:destination_relative].downcase }
       destination_conflicts = destination_groups.values.select { |group| group.length > 1 }.map do |group|
         {
@@ -37,6 +51,7 @@ module SceneTextureSwitcher
         surfaces: @scan_result[:surfaces],
         cue_plans: cue_plans(scene_labels),
         mappings: mappings.sort_by { |mapping| mapping[:destination_relative] },
+        supporting_file_count: supporting_mappings.length,
         conflicts: @scan_result[:conflicts] + destination_conflicts,
         ignored: @scan_result[:ignored],
         warnings: @scan_result[:warnings],
@@ -60,4 +75,3 @@ module SceneTextureSwitcher
     end
   end
 end
-

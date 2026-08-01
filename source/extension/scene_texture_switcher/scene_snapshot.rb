@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require File.join(__dir__, 'texture_library_status') unless defined?(SceneTextureSwitcher::TextureLibraryStatus)
+require File.join(__dir__, 'texture_applier') unless defined?(SceneTextureSwitcher::TextureApplier)
+require File.join(__dir__, 'preview_assets') unless defined?(SceneTextureSwitcher::PreviewAssets)
+
 module SceneTextureSwitcher
   # Converts SketchUp pages and texture readiness into plain serializable data
   # for the overview. It does not alter the model or filesystem.
@@ -110,7 +114,8 @@ module SceneTextureSwitcher
           texture_index: cue,
           status: readiness[:status].to_s,
           present_count: readiness[:present_count],
-          required_count: readiness[:required_count]
+          required_count: readiness[:required_count],
+          preview_files: root ? PreviewAssets.for_state(root, cue) : []
         }
       end
     end

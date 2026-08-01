@@ -54,6 +54,20 @@ class LegacyLibraryScannerTest < Minitest::Test
     end
   end
 
+  def test_numeric_working_files_are_permitted_supporting_content
+    Dir.mktmpdir do |root|
+      create_texture(root, 'Surface01', '01.png')
+      create_texture(root, 'Surface01', '01.psd')
+      create_texture(root, 'Surface01', '01.tif')
+
+      result = Scanner.new(root).scan
+
+      assert_equal %w[.psd .tif], result[:supporting_files].map { |record| record[:extension] }
+      assert_equal :ready, result[:cues]['01'][:summary][:status]
+      assert_empty result[:conflicts]
+    end
+  end
+
   private
 
   def create_texture(root, surface, filename)
@@ -62,4 +76,3 @@ class LegacyLibraryScannerTest < Minitest::Test
     File.write(File.join(folder, filename), 'fixture')
   end
 end
-

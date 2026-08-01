@@ -168,3 +168,18 @@ The synchronizer runs after assignment and debounced scene-list edits. It:
 - removes a vacated numeric folder only when it is completely empty;
 - identifies managed markers by their exact header and persistent scene key;
 - never edits texture images or unrelated text files.
+
+### dev.10 literal texture previews and silent working files
+
+Non-output files are permitted working content. A cue-matched file such as
+`Surface01/03.psd` is preserved during future migration as
+`03/Surface01.psd`, but PSD, TIFF, PDF, and other formats never participate in
+texture readiness, precedence, or conflict reporting. Unrelated files are no
+longer printed as migration problems.
+
+Hovering a scene's texture number after a short delay shows the literal
+PNG/JPG/JPEG files available for that state, labelled only by `Surface##`.
+There is no semantic grouping or usage inference. Clicking a thumbnail—or
+pressing `Z` while it is hovered—opens that exact file in a large, resizable
+preview. `Z` or Escape closes the large view. Clicking provides the
+cross-platform fallback if SketchUp captures the keyboard shortcut.

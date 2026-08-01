@@ -1,5 +1,7 @@
 require 'json'
 require File.join(__dir__, 'texture_library_status')
+require File.join(__dir__, 'texture_applier')
+require File.join(__dir__, 'preview_assets')
 require File.join(__dir__, 'scene_snapshot')
 require File.join(__dir__, 'overview_pages_observer')
 require File.join(__dir__, 'scene_assignment')

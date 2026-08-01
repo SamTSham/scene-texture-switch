@@ -19,6 +19,7 @@ class VerifiedSceneFirstMigrationTest < Minitest::Test
       source = File.join(root, 'textures')
       destination = File.join(root, 'Textures — Set')
       write_texture(source, 'Surface01', '01.png', 'png-one')
+      write_texture(source, 'Surface01', '01.psd', 'working-psd')
       write_texture(source, 'Surface02', '01.jpg', 'jpg-two')
       source_before = snapshot_files(source)
       plan = Planner.new(Scanner.new(source).scan).plan
@@ -32,11 +33,12 @@ class VerifiedSceneFirstMigrationTest < Minitest::Test
       assert result[:success]
       assert_equal source_before, snapshot_files(source)
       assert_equal 'png-one', File.read(File.join(destination, '01', 'Surface01.png'))
+      assert_equal 'working-psd', File.read(File.join(destination, '01', 'Surface01.psd'))
       assert_equal 'jpg-two', File.read(File.join(destination, '01', 'Surface02.jpg'))
       assert File.file?(File.join(destination, '01', '01_Opening - House.txt'))
       assert File.file?(File.join(destination, '01', '01_Opening - House.2.txt'))
       assert File.file?(File.join(destination, Migration::REPORT_NAME))
-      assert_equal 2, result[:copied].length
+      assert_equal 3, result[:copied].length
       assert result[:copied].all? { |record| record[:sha256].length == 64 }
     end
   end

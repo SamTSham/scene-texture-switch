@@ -9,7 +9,7 @@ module SceneTextureSwitcher
     'scene_texture_overview_preview/core'
   )
   PREVIEW_EXTENSION.description = 'Development scene texture assignment and readiness overview.'
-  PREVIEW_EXTENSION.version = '1.1.0-dev.9'
+  PREVIEW_EXTENSION.version = '1.1.0-dev.10'
   PREVIEW_EXTENSION.creator = 'Scene Texture Switcher project'
   Sketchup.register_extension(PREVIEW_EXTENSION, true)
 end
