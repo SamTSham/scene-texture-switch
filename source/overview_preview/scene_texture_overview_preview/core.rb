@@ -1,22 +1,25 @@
 # frozen_string_literal: true
 
-require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
 
 require 'json'
 require 'cgi'
-require File.join(__dir__, 'texture_library_status')
-require File.join(__dir__, 'scene_snapshot')
-require File.join(__dir__, 'overview_pages_observer')
-require File.join(__dir__, 'scene_assignment')
-require File.join(__dir__, 'library_association')
-require File.join(__dir__, 'texture_applier')
-require File.join(__dir__, 'scene_marker_name')
-require File.join(__dir__, 'scene_marker_sync')
-require File.join(__dir__, 'preview_assets')
-require File.join(__dir__, 'surface_labels')
-require File.join(__dir__, 'scene_transition_observer')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'texture_library_status')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'scene_snapshot')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'overview_pages_observer')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'scene_assignment')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'library_association')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'texture_applier')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'scene_marker_name')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'scene_marker_sync')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'preview_assets')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'surface_labels')
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'scene_transition_observer')
 
 module SamMadwar::SceneTextureSwitch
+  SOURCE_DIR = __dir__.dup.force_encoding(Encoding::UTF_8) unless const_defined?(:SOURCE_DIR, false)
+  SOURCE_FILE = __FILE__.dup.force_encoding(Encoding::UTF_8) unless const_defined?(:SOURCE_FILE, false)
+
   # Unified offline controller for switching, assignment, organisation, and help.
   module OverviewPreview
     extend self
@@ -39,9 +42,11 @@ module SamMadwar::SceneTextureSwitch
         :height => 420,
         :min_width => 300,
         :min_height => 180,
-        :style => UI::HtmlDialog::STYLE_DIALOG
+        # This persistent controller is a tool palette. STYLE_UTILITY keeps it
+        # compact and above SketchUp without treating it as a document dialog.
+        :style => UI::HtmlDialog::STYLE_UTILITY
       })
-      @dialog.set_file(File.join(__dir__, 'html', 'overview.html'))
+      @dialog.set_file(File.join(SOURCE_DIR, 'html', 'overview.html'))
       @dialog.add_action_callback('requestSnapshot') do |_action_context|
         refresh(@dialog)
       end
@@ -62,6 +67,9 @@ module SamMadwar::SceneTextureSwitch
       end
       @dialog.add_action_callback('revealLibrary') do |_action_context|
         reveal_library
+      end
+      @dialog.add_action_callback('openSettings') do |_action_context|
+        activate_settings
       end
       @dialog.set_on_closed do
         detach_pages_observer
@@ -90,7 +98,7 @@ module SamMadwar::SceneTextureSwitch
         :min_height => 360,
         :style => UI::HtmlDialog::STYLE_DIALOG
       })
-      @settings_dialog.set_file(File.join(__dir__, 'html', 'settings.html'))
+      @settings_dialog.set_file(File.join(SOURCE_DIR, 'html', 'settings.html'))
       @settings_dialog.add_action_callback('requestSettings') { |_context| refresh_settings }
       @settings_dialog.add_action_callback('revealLibrary') { |_context| reveal_library }
       @settings_dialog.add_action_callback('revealStarter') { |_context| reveal_starter }
@@ -278,7 +286,7 @@ module SamMadwar::SceneTextureSwitch
     end
 
     def reveal_starter
-      folder = File.join(__dir__, 'starter')
+      folder = File.join(SOURCE_DIR, 'starter')
       return UI.messagebox('The supplied starter folder is missing from this installation.') unless Dir.exist?(folder)
 
       UI.openURL(PreviewAssets.file_url(folder))
@@ -364,36 +372,16 @@ module SamMadwar::SceneTextureSwitch
       @scene_transition_observer_id = Sketchup::Pages.add_frame_change_observer(
         @scene_transition_observer
       )
-      start_scene_safety_polling
     rescue StandardError => error
       puts "[SceneTextureSwitch] Native scene observer unavailable: #{error.message}"
-      start_scene_safety_polling
-    end
-
-    # Retained as a low-frequency safety net and to initialise a model that was
-    # already open when the extension loaded. Native transition events lead.
-    def start_scene_safety_polling
-      return if @scene_safety_polling_started
-
-      @scene_safety_polling_started = true
-      @last_scene_identity = nil
-      UI.start_timer(1.0, true) do
-        model = Sketchup.active_model
-        current = model.pages.selected_page
-        identity = scene_identity(model, current)
-        next unless identity && identity != @last_scene_identity
-
-        @last_scene_identity = identity
-        on_scene_changed(current)
-      end
     end
   end
 
-  unless file_loaded?(__FILE__)
+  unless file_loaded?(SOURCE_FILE)
     menu = UI.menu('Extensions').add_submenu('Scene TextureSwitch')
     menu.add_item('Open Scene TextureSwitch') { OverviewPreview.activate }
     menu.add_item('Settings + Quick Guide…') { OverviewPreview.activate_settings }
     OverviewPreview.start_scene_monitoring
-    file_loaded(__FILE__)
+    file_loaded(SOURCE_FILE)
   end
 end
