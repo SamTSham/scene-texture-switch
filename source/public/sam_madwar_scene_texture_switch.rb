@@ -9,8 +9,8 @@ module SamMadwar
       'Scene TextureSwitch',
       'sam_madwar_scene_texture_switch/core'
     )
-    EXTENSION.description = 'Makes named SketchUp materials show different image files in different scenes.'
-    EXTENSION.version = '1.0.0'
+    EXTENSION.description = 'Switches projection, LED, signage and scenic-graphic textures with SketchUp scenes.'
+    EXTENSION.version = '1.0.1'
     EXTENSION.creator = 'Sam Madwar'
     EXTENSION.copyright = 'Copyright 2026 Sam Madwar'
 
