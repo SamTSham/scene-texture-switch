@@ -73,6 +73,8 @@ Please use this repository's Issues page to report a problem. Include your
 SketchUp version, operating system, texture-folder layout, and the smallest
 example that reproduces the problem.
 
+If this free tool helps your work, you can [buy me a coffee on Ko-fi](https://ko-fi.com/samtsham). Contributions are entirely optional and help keep all three plugins free and maintained.
+
 ## Licence
 
 Copyright © 2026 Sam Madwar. Released under the [MIT Licence](LICENSE).
