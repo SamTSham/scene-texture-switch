@@ -4,7 +4,7 @@ require 'fileutils'
 require 'tmpdir'
 
 ROOT = File.expand_path('..', __dir__)
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 BASENAME = 'sam_madwar_scene_texture_switch'
 OUTPUT = ARGV[0] || File.join(ROOT, 'builds', "SceneTextureSwitch_#{VERSION}.rbz")
 CONTROLLER_SOURCE = File.join(ROOT, 'source', 'overview_preview', 'scene_texture_overview_preview')
@@ -30,6 +30,8 @@ Dir.mktmpdir('scene-texture-switch-public') do |stage|
   starter = File.join(starter_parent, 'textures - Starter')
   FileUtils.mkdir_p(starter)
   Dir.children(File.join(ROOT, 'assets', 'starter')).each do |entry|
+    next if entry.start_with?('.')
+
     source = File.join(ROOT, 'assets', 'starter', entry)
     FileUtils.cp(source, starter) if File.file?(source)
   end
@@ -37,6 +39,8 @@ Dir.mktmpdir('scene-texture-switch-public') do |stage|
     cue_folder = File.join(starter, cue)
     FileUtils.mkdir_p(cue_folder)
     Dir.children(File.join(ROOT, 'assets', 'starter', cue)).each do |entry|
+      next if entry.start_with?('.')
+
       source = File.join(ROOT, 'assets', 'starter', cue, entry)
       FileUtils.cp(source, cue_folder) if File.file?(source)
     end
@@ -49,6 +53,8 @@ Dir.mktmpdir('scene-texture-switch-public') do |stage|
   guide = File.join(folder, 'guide')
   FileUtils.mkdir_p(guide)
   Dir.children(File.join(ROOT, 'assets', 'guide')).each do |entry|
+    next if entry.start_with?('.')
+
     source = File.join(ROOT, 'assets', 'guide', entry)
     FileUtils.cp(source, guide) if File.file?(source)
   end

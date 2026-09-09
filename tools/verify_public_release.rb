@@ -3,7 +3,7 @@
 require 'open3'
 
 ROOT = File.expand_path('..', __dir__)
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 BASENAME = 'sam_madwar_scene_texture_switch'
 ARCHIVE = ARGV[0] || File.join(ROOT, 'builds', "SceneTextureSwitch_#{VERSION}.rbz")
 
@@ -17,6 +17,7 @@ abort "Release is missing: #{ARCHIVE}" unless File.file?(ARCHIVE)
 
 entries = capture!('unzip', '-Z1', ARCHIVE).lines.map(&:chomp).reject(&:empty?)
 abort 'Archive contains an unsafe path.' if entries.any? { |entry| entry.start_with?('/') || entry.split('/').include?('..') }
+abort 'Archive contains macOS metadata files.' if entries.any? { |entry| File.basename(entry).start_with?('.') }
 
 roots = entries.map { |entry| entry.split('/').first }.uniq.sort
 expected_roots = [BASENAME, "#{BASENAME}.rb"].sort
@@ -46,7 +47,14 @@ entries.select { |entry| text_extensions.include?(File.extname(entry)) }.each do
   content = capture!('unzip', '-p', ARCHIVE, entry)
   found = forbidden.find { |text| content.include?(text) }
   abort "Forbidden development text #{found.inspect} in #{entry}" if found
+
+  if File.extname(entry) == '.rb' && content.match?(/(?<!Sketchup\.)require File\.join/)
+    abort "Encrypted-incompatible internal require in #{entry}"
+  end
 end
+
+controller = capture!('unzip', '-p', ARCHIVE, "#{BASENAME}/core.rb")
+abort 'Release must not mutate the open model from a startup safety poll.' if controller.include?('start_scene_safety_polling')
 
 puts "Verified public release: #{ARCHIVE}"
 puts "Root loader: #{BASENAME}.rb"
