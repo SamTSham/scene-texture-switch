@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+source_dir = __dir__.dup.force_encoding(Encoding::UTF_8)
+Sketchup.require File.join(source_dir, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
 
-require File.join(__dir__, 'texture_library_status') unless defined?(SamMadwar::SceneTextureSwitch::TextureLibraryStatus)
-require File.join(__dir__, 'texture_applier') unless defined?(SamMadwar::SceneTextureSwitch::TextureApplier)
-require File.join(__dir__, 'preview_assets') unless defined?(SamMadwar::SceneTextureSwitch::PreviewAssets)
-require File.join(__dir__, 'surface_labels') unless defined?(SamMadwar::SceneTextureSwitch::SurfaceLabels)
+Sketchup.require File.join(source_dir, 'texture_library_status') unless defined?(SamMadwar::SceneTextureSwitch::TextureLibraryStatus)
+Sketchup.require File.join(source_dir, 'texture_applier') unless defined?(SamMadwar::SceneTextureSwitch::TextureApplier)
+Sketchup.require File.join(source_dir, 'preview_assets') unless defined?(SamMadwar::SceneTextureSwitch::PreviewAssets)
+Sketchup.require File.join(source_dir, 'surface_labels') unless defined?(SamMadwar::SceneTextureSwitch::SurfaceLabels)
 
 module SamMadwar::SceneTextureSwitch
   # Converts SketchUp pages and texture readiness into plain serializable data

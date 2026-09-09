@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
 
 module SamMadwar::SceneTextureSwitch
   # SketchUp calls this object for every frame of a scene transition. We notify

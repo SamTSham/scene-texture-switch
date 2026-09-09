@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
 
 module SamMadwar::SceneTextureSwitch
   module TextureApplier
@@ -9,9 +9,15 @@ module SamMadwar::SceneTextureSwitch
     SURFACE_COUNT = 99
 
     def apply(model, library_root, cue)
+      operation_started = false
       normalized_cue = TextureLibraryStatus.normalize_cue(cue)
       layout = TextureLibraryStatus.layout(library_root)
       result = { cue: normalized_cue, layout: layout, applied: [], missing: [], errors: [] }
+
+      # Scene changes and the safety poll can invoke this without a direct user
+      # action. Keep every material update in one transparent undo operation.
+      model.start_operation('Apply Scene Textures', true, false, true)
+      operation_started = true
 
       (1..SURFACE_COUNT).each do |number|
         material_name = format('Surface%02d', number)
@@ -34,7 +40,12 @@ module SamMadwar::SceneTextureSwitch
           result[:errors] << { material: material_name, path: texture_path, error: error.message }
         end
       end
+      model.commit_operation
+      operation_started = false
       result
+    rescue StandardError
+      model.abort_operation if operation_started
+      raise
     end
 
     def preferred_texture(root, layout, material_name, cue)

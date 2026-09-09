@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.join(__dir__, 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
+Sketchup.require File.join(__dir__.dup.force_encoding(Encoding::UTF_8), 'namespace') unless defined?(SamMadwar::SceneTextureSwitch)
 
 module SamMadwar::SceneTextureSwitch
   module LibraryAssociation
@@ -14,16 +14,5 @@ module SamMadwar::SceneTextureSwitch
       value.empty? ? nil : value
     end
 
-    def set(model, folder_name)
-      safe_name = File.basename(folder_name.to_s)
-      raise ArgumentError, 'Texture library must be beside the SketchUp model.' unless safe_name == folder_name.to_s
-
-      model.set_attribute(ATTRIBUTE_DICTIONARY, LIBRARY_KEY, safe_name)
-      safe_name
-    end
-
-    def clear(model)
-      model.delete_attribute(ATTRIBUTE_DICTIONARY, LIBRARY_KEY)
-    end
   end
 end
