@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
+require_relative 'test_helper'
 require_relative '../source/extension/scene_texture_switcher/scene_marker_name'
 
 class SceneMarkerNameTest < Minitest::Test
@@ -48,4 +49,3 @@ class SceneMarkerNameTest < Minitest::Test
     assert_operator Naming.allocate(['a' * 200, 'a' * 200]).last.length, :<=, 120
   end
 end
-

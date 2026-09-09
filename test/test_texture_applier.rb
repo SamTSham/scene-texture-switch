@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
+require_relative 'test_helper'
 require 'tmpdir'
 require 'fileutils'
 require_relative '../source/extension/scene_texture_switcher/texture_library_status'
@@ -25,7 +26,26 @@ class TextureApplierTest < Minitest::Test
     end
   end
 
-  FakeModel = Struct.new(:materials)
+  class FakeModel
+    attr_reader :materials, :operations
+
+    def initialize(materials)
+      @materials = materials
+      @operations = []
+    end
+
+    def start_operation(*arguments)
+      @operations << [:start, arguments]
+    end
+
+    def commit_operation
+      @operations << [:commit]
+    end
+
+    def abort_operation
+      @operations << [:abort]
+    end
+  end
 
   def test_applies_scene_first_png_and_preserves_mapping_size
     Dir.mktmpdir do |root|
@@ -40,6 +60,10 @@ class TextureApplierTest < Minitest::Test
       assert_equal File.join(root, '03', 'Surface01.png'), material.assigned_path
       assert_equal [240, 135], material.texture.size
       assert_equal 1, result[:applied].length
+      assert_equal [
+        [:start, ['Apply Scene Textures', true, false, true]],
+        [:commit]
+      ], model.operations
     end
   end
 
@@ -74,6 +98,7 @@ class TextureApplierTest < Minitest::Test
       assert_equal 1, result[:errors].length
       assert_equal 1, result[:applied].length
       assert_match(/Surface02\.png/, good.assigned_path)
+      assert_equal 1, model.operations.count { |entry| entry.first == :commit }
     end
   end
 end

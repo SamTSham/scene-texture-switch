@@ -28,4 +28,14 @@ class OverviewCallbackWiringTest < Minitest::Test
     assert_includes html, "temporaryGuide('Reveal texture library')"
     assert_includes html, 'window.sketchup.revealLibrary()'
   end
+
+  def test_help_control_opens_settings_and_quick_guide
+    core = File.read(File.join(ROOT, 'source', 'overview_preview', 'scene_texture_overview_preview', 'core.rb'))
+    html = File.read(File.join(ROOT, 'source', 'extension', 'scene_texture_switcher', 'html', 'overview.html'))
+
+    assert_includes core, "add_action_callback('openSettings')"
+    assert_includes core, 'activate_settings'
+    assert_includes html, 'aria-label="Open Settings and Quick Guide"'
+    assert_includes html, 'window.sketchup.openSettings()'
+  end
 end

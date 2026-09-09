@@ -31,7 +31,8 @@ class UnifiedReleaseWiringTest < Minitest::Test
     refute_includes source, 'adopt_existing_scene_first_copy'
     assert_includes source, 'OverviewPreview.start_scene_monitoring'
     assert_includes source, 'Sketchup::Pages.add_frame_change_observer'
-    assert_includes source, 'UI.start_timer(1.0, true)'
+    refute_includes source, 'start_scene_safety_polling'
+    refute_includes source, 'UI.start_timer(1.0, true)'
   end
 
   def test_release_package_includes_settings_guide_and_retirement_shim

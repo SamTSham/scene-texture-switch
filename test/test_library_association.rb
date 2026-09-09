@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
+require_relative 'test_helper'
 require_relative '../source/extension/scene_texture_switcher/library_association'
 
 class LibraryAssociationTest < Minitest::Test
@@ -15,29 +16,26 @@ class LibraryAssociationTest < Minitest::Test
       @attributes.fetch([dictionary, key], default)
     end
 
-    def set_attribute(dictionary, key, value)
+    def seed(dictionary, key, value)
       @attributes[[dictionary, key]] = value
     end
-
-    def delete_attribute(dictionary, key)
-      @attributes.delete([dictionary, key])
-    end
   end
 
-  def test_stores_only_a_folder_name_beside_the_model
+  def test_reads_the_existing_folder_association
     model = FakeModel.new
+    model.seed('SceneTextureSwitcher', 'texture_library_folder', 'Textures — Set')
 
-    assert_equal 'Textures — Set', Association.set(model, 'Textures — Set')
     assert_equal 'Textures — Set', Association.folder_name(model)
-    assert_raises(ArgumentError) { Association.set(model, '../Elsewhere') }
   end
 
-  def test_can_clear_association
+  def test_returns_nil_when_no_association_exists
     model = FakeModel.new
-    Association.set(model, 'Textures — Set')
-
-    Association.clear(model)
 
     assert_nil Association.folder_name(model)
+  end
+
+  def test_does_not_expose_unused_attribute_writers
+    refute_respond_to Association, :set
+    refute_respond_to Association, :clear
   end
 end
