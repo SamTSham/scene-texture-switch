@@ -3,13 +3,20 @@
 ## What is this?
 
 SketchUp scenes cannot normally make one material show different image files in
-different scenes. **Scene TextureSwitch adds that missing switch.**
+different scenes. **Scene TextureSwitch adds that missing switch.** It is useful
+for projection design, LED screens and video walls, theatre and event scenery,
+signage, exhibition graphics, presentation boards, and any model in which an
+image or material needs to change with a scene.
 
 Keep the saved `.skp` file and a folder beginning with `textures` together in
 the same project folder. Each scene chooses a numbered set of pictures.
 
 Edit or replace those pictures, and the textures, projections or LED content in
 the model change with the scenes.
+
+You can think of it as scene-based texture switching, material variants, image
+cueing, or swapping graphics between scenes: all of those workflows use the
+same numbered picture sets described below.
 
 ## The basic idea
 
