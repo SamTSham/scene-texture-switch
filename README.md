@@ -3,9 +3,9 @@
 Scene TextureSwitch makes named SketchUp materials show different image files
 in different scenes.
 
-It was created for set-design workflows involving projections, LED surfaces,
-scenic graphics, signage, and other images that must change with SketchUp
-scenes. It works locally without an account, subscription, licence check,
+It supports set-design workflows involving projections, LED screens and video
+walls, scenic graphics, signage, exhibition displays, presentation boards,
+material variants and image cueing across SketchUp scenes. It works locally without an account, subscription, licence check,
 telemetry, or internet connection.
 
 ## The basic idea
@@ -30,7 +30,7 @@ Change scenes and the destination pictures appear immediately.
 
 ## Install
 
-1. Download the latest `.rbz` release.
+1. Download the [prepared 1.0.1 maintenance build](release/SceneTextureSwitch_1.0.1.rbz?raw=true). See its [release notes and validation status](docs/RELEASE_NOTES_1.0.1.md) and [checksum](release/SHA256SUMS-1.0.1.txt).
 2. In SketchUp, open **Extensions → Extension Manager**.
 3. Click **Install Extension** and choose the downloaded RBZ.
 4. Restart SketchUp if requested.
@@ -60,8 +60,12 @@ The complete illustrated guide is included inside the extension and in
 
 ## Compatibility
 
-Confirmed manually in SketchUp 2026 on macOS. Additional SketchUp and Windows
-versions will be listed after testing rather than claimed in advance.
+Designed for desktop SketchUp on macOS and Windows, with explicit UTF-8 path
+handling. Confirmed manual testing of the project is on SketchUp 2026/macOS;
+Windows hardware testing remains unconfirmed. The current 1.0.1 corrections
+pass automated tests, but a fresh SketchUp installation, open/close-without-editing
+check and scene-switching check still need manual confirmation. Do not treat
+this GitHub build as proof of Extension Warehouse approval.
 
 ## Support
 

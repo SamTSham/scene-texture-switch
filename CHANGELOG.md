@@ -1,5 +1,17 @@
 # Changelog
 
+## Public 1.0.1 — prepared maintenance build
+
+- Correct internal loading for encrypted Warehouse packages.
+- Remove model mutation from the startup safety poll.
+- Apply explicit UTF-8 file path handling.
+- Expand the guide across scenic, projection, LED, signage, exhibition and material-variant workflows.
+- See [release notes and remaining runtime checks](docs/RELEASE_NOTES_1.0.1.md).
+
+## Historical development numbering
+
+The entries below retain their original internal version labels. They are not newer public releases than 1.0.1.
+
 ## 1.2.0-rc.11
 
 - Replaced the SketchUp 2026 example model with a SketchUp 2013-format copy so
